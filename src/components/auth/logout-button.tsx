@@ -10,12 +10,18 @@ export function LogoutButton() {
   const { toast } = useToast();
 
   const handleLogout = () => {
-    // In a real app, you'd clear session/token here
+    try {
+      // Clear the session storage to log the user out
+      sessionStorage.removeItem('isAuthenticated');
+    } catch (error) {
+      console.error('Session storage not available.');
+    }
+    
     toast({
       title: 'Logged Out',
       description: 'You have been successfully logged out.',
     });
-    router.push('/');
+    router.push('/admin/login');
   };
 
   return (

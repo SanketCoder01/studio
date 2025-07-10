@@ -1,3 +1,7 @@
+
+'use client';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ProfileForm } from '@/components/admin/profile-form';
 import { AboutForm } from '@/components/admin/about-form';
@@ -8,13 +12,42 @@ import { CertificationsList } from '@/components/admin/certifications-list';
 import { ContactList } from '@/components/admin/contact-list';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
+// A simple client-side check for authentication state
+const useAuth = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    try {
+      const authStatus = sessionStorage.getItem('isAuthenticated');
+      if (authStatus === 'true') {
+        setIsAuthenticated(true);
+      } else {
+        router.push('/admin/login');
+      }
+    } catch (error) {
+      // If sessionStorage is not available (e.g. in SSR), redirect
+      router.push('/admin/login');
+    }
+  }, [router]);
+
+  return isAuthenticated;
+};
+
 
 export default function AdminPage() {
+  const isAuthenticated = useAuth();
+  
+  // Render a loading state or nothing until authentication is confirmed
+  if (!isAuthenticated) {
+    return null; 
+  }
+
   return (
     <div className="space-y-6">
-       <Card>
+       <Card className="fade-in-up">
         <CardHeader>
-          <CardTitle className="font-headline">Welcome, Admin!</CardTitle>
+          <CardTitle className="font-headline text-3xl">Welcome, Admin!</CardTitle>
           <CardDescription>
             Use the tabs below to manage the content of your portfolio website.
             Changes will be reflected on the live site after saving.
@@ -22,7 +55,7 @@ export default function AdminPage() {
         </CardHeader>
       </Card>
 
-      <Tabs defaultValue="profile" className="w-full" id="admin-tabs">
+      <Tabs defaultValue="profile" className="w-full fade-in-up" style={{ animationDelay: '0.2s' }}>
         <TabsList className="grid w-full grid-cols-3 h-auto md:grid-cols-4 lg:grid-cols-7">
           <TabsTrigger value="profile">Profile</TabsTrigger>
           <TabsTrigger value="about">About</TabsTrigger>
@@ -33,13 +66,13 @@ export default function AdminPage() {
           <TabsTrigger value="contacts">Contacts</TabsTrigger>
         </TabsList>
         
-        <div id="profile" className="pt-4"><TabsContent value="profile"><ProfileForm /></TabsContent></div>
-        <div id="about" className="pt-4"><TabsContent value="about"><AboutForm /></TabsContent></div>
-        <div id="projects" className="pt-4"><TabsContent value="projects"><ProjectsList /></TabsContent></div>
-        <div id="internships" className="pt-4"><TabsContent value="internships"><InternshipsList /></TabsContent></div>
-        <div id="education" className="pt-4"><TabsContent value="education"><EducationList /></TabsContent></div>
-        <div id="certifications" className="pt-4"><TabsContent value="certifications"><CertificationsList /></TabsContent></div>
-        <div id="contacts" className="pt-4"><TabsContent value="contacts"><ContactList /></TabsContent></div>
+        <div id="profile" className="pt-6"><TabsContent value="profile"><ProfileForm /></TabsContent></div>
+        <div id="about" className="pt-6"><TabsContent value="about"><AboutForm /></TabsContent></div>
+        <div id="projects" className="pt-6"><TabsContent value="projects"><ProjectsList /></TabsContent></div>
+        <div id="internships" className="pt-6"><TabsContent value="internships"><InternshipsList /></TabsContent></div>
+        <div id="education" className="pt-6"><TabsContent value="education"><EducationList /></TabsContent></div>
+        <div id="certifications" className="pt-6"><TabsContent value="certifications"><CertificationsList /></TabsContent></div>
+        <div id="contacts" className="pt-6"><TabsContent value="contacts"><ContactList /></TabsContent></div>
       </Tabs>
     </div>
   );

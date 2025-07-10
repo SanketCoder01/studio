@@ -14,6 +14,7 @@ const formSchema = z.object({
   password: z.string().min(1, 'Password is required.'),
 });
 
+// In a real application, these would be checked against a database.
 const ADMIN_EMAIL = 'sanketg367@gmail.com';
 const ADMIN_PASSWORD = 'sanket@99';
 
@@ -30,9 +31,16 @@ export function LoginForm() {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     if (values.email.toLowerCase() === ADMIN_EMAIL && values.password === ADMIN_PASSWORD) {
+      try {
+        // Use sessionStorage to persist login state across reloads for the current tab.
+        sessionStorage.setItem('isAuthenticated', 'true');
+      } catch (error) {
+        console.error('Session storage is not available.');
+      }
+      
       toast({
         title: 'Login Successful',
-        description: 'Welcome, Admin!',
+        description: 'Welcome back, Admin!',
       });
       router.push('/admin');
     } else {
