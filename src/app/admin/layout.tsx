@@ -18,7 +18,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { LogoutButton } from '@/components/auth/logout-button';
 import { useAuth } from '@/hooks/use-auth';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 
 export default function AdminLayout({
@@ -28,15 +28,21 @@ export default function AdminLayout({
 }) {
   const { isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
+
+  const isLoginPage = pathname === '/admin/login';
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
+    if (!isLoading && !isAuthenticated && !isLoginPage) {
       router.push('/admin/login');
     }
-  }, [isLoading, isAuthenticated, router]);
+  }, [isLoading, isAuthenticated, router, isLoginPage]);
+
+  if (isLoginPage) {
+    return <>{children}</>;
+  }
 
   if (isLoading || !isAuthenticated) {
-    // Render a loading spinner while checking auth state.
     return (
         <div className="flex min-h-screen items-center justify-center bg-background">
             <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
@@ -44,7 +50,6 @@ export default function AdminLayout({
     );
   }
 
-  // If authenticated, render the admin layout with the sidebar and content.
   return (
     <SidebarProvider>
       <Sidebar>
