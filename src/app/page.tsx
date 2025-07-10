@@ -7,12 +7,14 @@ import { ProjectsSection } from '@/components/sections/projects-section';
 import { CertificationsSection } from '@/components/sections/certifications-section';
 import { ContactSection } from '@/components/sections/contact-section';
 import { Footer } from '@/components/footer';
+import { Header } from '@/components/header';
 
 export default function Home() {
   const { profile, education, internships, projects, certifications } = portfolioData;
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
+      <Header />
       <main className="flex-grow">
         <HeroSection profile={profile} />
         <AboutSection about={profile.about} cvUrl={profile.cvUrl} />

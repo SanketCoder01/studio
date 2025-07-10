@@ -11,9 +11,10 @@ import {
   SidebarInset,
 } from '@/components/ui/sidebar';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Home, User, BookUser, Briefcase, GraduationCap, Award, Building2, Mail, PanelLeft } from 'lucide-react';
+import { Home, User, BookUser, Briefcase, GraduationCap, Award, Building2, Mail, PanelLeft, LogOut } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { LogoutButton } from '@/components/auth/logout-button';
 
 export default function AdminLayout({
   children,
@@ -74,10 +75,11 @@ export default function AdminLayout({
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarContent>
-        <SidebarFooter>
-             <Button variant="ghost" asChild className="w-full justify-start">
+        <SidebarFooter className="flex flex-col gap-2">
+             <Button variant="outline" asChild className="w-full justify-start">
                 <Link href="/"><Home className="mr-2 h-4 w-4" /> View Site</Link>
             </Button>
+            <LogoutButton />
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>

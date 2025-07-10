@@ -52,6 +52,7 @@
 @layer base {
   * {
     @apply border-border;
+    scroll-behavior: smooth;
   }
   body {
     @apply bg-background text-foreground;
@@ -61,6 +62,9 @@
   }
   .font-body {
     font-family: var(--font-body);
+  }
+  section {
+    @apply scroll-mt-20;
   }
 }
 

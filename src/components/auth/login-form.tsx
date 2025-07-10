@@ -11,9 +11,11 @@ import { useToast } from '@/hooks/use-toast';
 
 const formSchema = z.object({
   email: z.string().email('Please enter a valid email.'),
+  password: z.string().min(1, 'Password is required.'),
 });
 
 const ADMIN_EMAIL = 'sanketg367@gmail.com';
+const ADMIN_PASSWORD = 'sanket@99';
 
 export function LoginForm() {
   const router = useRouter();
@@ -22,11 +24,12 @@ export function LoginForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: '',
+      password: '',
     },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    if (values.email.toLowerCase() === ADMIN_EMAIL) {
+    if (values.email.toLowerCase() === ADMIN_EMAIL && values.password === ADMIN_PASSWORD) {
       toast({
         title: 'Login Successful',
         description: 'Welcome, Admin!',
@@ -36,7 +39,7 @@ export function LoginForm() {
       toast({
         variant: 'destructive',
         title: 'Authentication Failed',
-        description: 'Please enter the correct admin email ID.',
+        description: 'Please check your email and password.',
       });
     }
   }
@@ -52,6 +55,19 @@ export function LoginForm() {
               <FormLabel>Admin Email</FormLabel>
               <FormControl>
                 <Input type="email" placeholder="admin@example.com" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Password</FormLabel>
+              <FormControl>
+                <Input type="password" placeholder="********" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
