@@ -7,7 +7,7 @@ type InternshipsSectionProps = {
 
 export function InternshipsSection({ internships }: InternshipsSectionProps) {
   return (
-    <section id="internships" className="py-20 md:py-32 bg-secondary/30 fade-in-up">
+    <section id="internships" className="py-20 md:py-32 bg-secondary/50 dark:bg-secondary/30 fade-in-up">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="font-headline text-4xl font-bold md:text-5xl">
@@ -24,14 +24,14 @@ export function InternshipsSection({ internships }: InternshipsSectionProps) {
               <div className="md:flex md:items-center" style={{ flexDirection: index % 2 === 0 ? 'row' : 'row-reverse' }}>
                 <div className="md:w-1/2 md:pr-8">
                   {index % 2 === 0 ? (
-                    <div className="p-6 bg-background rounded-xl border border-border shadow-md hover:shadow-primary/20 hover:border-primary/50 transition-all duration-300">
+                    <div className="p-6 bg-background rounded-xl border border-border shadow-md hover:shadow-primary/20 hover:border-primary/50 transition-all duration-300 hover:-translate-y-1">
                       <InternshipCardContent internship={internship} />
                     </div>
                   ) : <div></div>}
                 </div>
                 <div className="md:w-1/2 md:pl-8">
                   {index % 2 !== 0 ? (
-                     <div className="p-6 bg-background rounded-xl border border-border shadow-md hover:shadow-primary/20 hover:border-primary/50 transition-all duration-300">
+                     <div className="p-6 bg-background rounded-xl border border-border shadow-md hover:shadow-primary/20 hover:border-primary/50 transition-all duration-300 hover:-translate-y-1">
                       <InternshipCardContent internship={internship} />
                     </div>
                   ) : <div></div>}

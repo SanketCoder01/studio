@@ -19,7 +19,7 @@ export function CertificationsSection({ certifications }: CertificationsSectionP
         </div>
         <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
           {certifications.map((cert) => (
-            <div key={cert.id} className="group relative p-6 bg-secondary/30 rounded-xl border border-border hover:border-primary/50 transition-all duration-300">
+            <div key={cert.id} className="group relative p-6 bg-secondary/50 dark:bg-secondary/30 rounded-xl border border-border hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-1">
               <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"></div>
               <div className="relative flex items-start gap-6">
                 <div className="bg-primary/10 text-primary p-3 rounded-lg group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">

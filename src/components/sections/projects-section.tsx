@@ -22,7 +22,7 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {projects.map((project) => (
-            <Card key={project.id} className="flex flex-col overflow-hidden group transition-all duration-300 bg-secondary/30 border-border hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2">
+            <Card key={project.id} className="flex flex-col overflow-hidden group transition-all duration-300 bg-secondary/50 dark:bg-secondary/30 border-border hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2">
               <div className="relative h-48 w-full overflow-hidden">
                 <Image
                   src={project.imageUrl}

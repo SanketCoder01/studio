@@ -7,7 +7,7 @@ type EducationSectionProps = {
 
 export function EducationSection({ education }: EducationSectionProps) {
   return (
-    <section id="education" className="py-20 md:py-32 bg-secondary/30 fade-in-up">
+    <section id="education" className="py-20 md:py-32 bg-secondary/50 dark:bg-secondary/30 fade-in-up">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="font-headline text-4xl font-bold md:text-5xl">
