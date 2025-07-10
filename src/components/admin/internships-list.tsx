@@ -1,12 +1,24 @@
 'use client';
-import { portfolioData } from "@/lib/data";
+import { usePortfolioData } from "@/hooks/use-portfolio-data";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal, PlusCircle } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { useToast } from "@/hooks/use-toast";
 
 export function InternshipsList() {
+    const { data, internships: { deleteItem } } = usePortfolioData();
+    const { toast } = useToast();
+
+    const handleDelete = (id: string) => {
+        deleteItem(id);
+        toast({
+            title: "Internship Deleted",
+            description: "The internship has been removed from your portfolio.",
+        });
+    };
+
     return (
         <Card>
             <CardHeader>
@@ -29,7 +41,7 @@ export function InternshipsList() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {portfolioData.internships.map((item) => (
+                        {data.internships.map((item) => (
                             <TableRow key={item.id}>
                                 <TableCell className="font-medium">{item.company}</TableCell>
                                 <TableCell>{item.role}</TableCell>
@@ -44,7 +56,7 @@ export function InternshipsList() {
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end">
                                             <DropdownMenuItem>Edit</DropdownMenuItem>
-                                            <DropdownMenuItem>Delete</DropdownMenuItem>
+                                            <DropdownMenuItem onClick={() => handleDelete(item.id)}>Delete</DropdownMenuItem>
                                         </DropdownMenuContent>
                                     </DropdownMenu>
                                 </TableCell>

@@ -1,4 +1,5 @@
-import { portfolioData } from '@/lib/data';
+'use client';
+
 import { HeroSection } from '@/components/sections/hero-section';
 import { AboutSection } from '@/components/sections/about-section';
 import { EducationSection } from '@/components/sections/education-section';
@@ -8,9 +9,11 @@ import { CertificationsSection } from '@/components/sections/certifications-sect
 import { ContactSection } from '@/components/sections/contact-section';
 import { Footer } from '@/components/footer';
 import { Header } from '@/components/header';
+import { usePortfolioData } from '@/hooks/use-portfolio-data';
 
 export default function Home() {
-  const { profile, education, internships, projects, certifications } = portfolioData;
+  const { data } = usePortfolioData();
+  const { profile, education, internships, projects, certifications } = data;
 
   return (
     <div className="flex flex-col min-h-screen bg-background">

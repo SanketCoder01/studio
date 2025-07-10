@@ -8,7 +8,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { portfolioData } from '@/lib/data';
+import { usePortfolioData } from '@/hooks/use-portfolio-data';
+import { useEffect } from 'react';
 
 const formSchema = z.object({
   about: z.string().min(20, 'About section must be at least 20 characters.'),
@@ -16,16 +17,21 @@ const formSchema = z.object({
 
 export function AboutForm() {
   const { toast } = useToast();
+  const { data, updateProfile } = usePortfolioData();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      about: portfolioData.profile.about,
+      about: data.profile.about,
     },
   });
+
+  useEffect(() => {
+    form.reset({ about: data.profile.about });
+  }, [data.profile.about, form]);
   
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+    updateProfile({ ...data.profile, about: values.about });
     toast({
       title: 'About Section Saved!',
       description: 'Your changes have been saved successfully.',

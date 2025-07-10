@@ -8,7 +8,8 @@ import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { portfolioData } from '@/lib/data';
+import { usePortfolioData } from '@/hooks/use-portfolio-data';
+import { useEffect } from 'react';
 
 const formSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),
@@ -18,13 +19,19 @@ const formSchema = z.object({
 
 export function ProfileForm() {
   const { toast } = useToast();
+  const { data, updateProfile } = usePortfolioData();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: portfolioData.profile,
+    defaultValues: data.profile,
   });
 
+  useEffect(() => {
+    form.reset(data.profile);
+  }, [data.profile, form]);
+
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+    updateProfile({ ...data.profile, ...values });
     toast({
       title: 'Profile Saved!',
       description: 'Your changes have been saved successfully.',

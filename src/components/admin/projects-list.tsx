@@ -1,12 +1,24 @@
 'use client';
-import { portfolioData } from "@/lib/data";
+import { usePortfolioData } from "@/hooks/use-portfolio-data";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal, PlusCircle } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { useToast } from "@/hooks/use-toast";
 
 export function ProjectsList() {
+    const { data, projects: { deleteItem } } = usePortfolioData();
+    const { toast } = useToast();
+
+    const handleDelete = (id: string) => {
+        deleteItem(id);
+        toast({
+            title: "Project Deleted",
+            description: "The project has been removed from your portfolio.",
+        });
+    }
+
     return (
         <Card>
             <CardHeader>
@@ -28,7 +40,7 @@ export function ProjectsList() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {portfolioData.projects.map((project) => (
+                        {data.projects.map((project) => (
                             <TableRow key={project.id}>
                                 <TableCell className="font-medium">{project.title}</TableCell>
                                 <TableCell className="max-w-md truncate">{project.description}</TableCell>
@@ -42,7 +54,7 @@ export function ProjectsList() {
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end">
                                             <DropdownMenuItem>Edit</DropdownMenuItem>
-                                            <DropdownMenuItem>Delete</DropdownMenuItem>
+                                            <DropdownMenuItem onClick={() => handleDelete(project.id)}>Delete</DropdownMenuItem>
                                         </DropdownMenuContent>
                                     </DropdownMenu>
                                 </TableCell>
