@@ -1,3 +1,5 @@
+
+'use client';
 import {
   SidebarProvider,
   Sidebar,
@@ -15,12 +17,33 @@ import { Home, User, BookUser, Briefcase, GraduationCap, Award, Building2, Mail,
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { LogoutButton } from '@/components/auth/logout-button';
+import { useAuth } from '@/hooks/use-auth';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { isAuthenticated, isLoading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      router.push('/admin/login');
+    }
+  }, [isLoading, isAuthenticated, router]);
+
+  if (isLoading || !isAuthenticated) {
+    // You can render a loading spinner here while checking auth
+    return (
+        <div className="flex min-h-screen items-center justify-center bg-background">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+        </div>
+    );
+  }
+
   return (
     <SidebarProvider>
       <Sidebar>

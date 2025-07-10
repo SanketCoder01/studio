@@ -1,7 +1,7 @@
 
 'use client';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ProfileForm } from '@/components/admin/profile-form';
 import { AboutForm } from '@/components/admin/about-form';
@@ -11,38 +11,23 @@ import { InternshipsList } from '@/components/admin/internships-list';
 import { CertificationsList } from '@/components/admin/certifications-list';
 import { ContactList } from '@/components/admin/contact-list';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useAuth } from '@/hooks/use-auth';
 
-// A simple client-side check for authentication state
-const useAuth = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+export default function AdminPage() {
+  const { isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    try {
-      const authStatus = sessionStorage.getItem('isAuthenticated');
-      if (authStatus === 'true') {
-        setIsAuthenticated(true);
-      } else {
-        router.push('/admin/login');
-      }
-    } catch (error) {
-      // If sessionStorage is not available (e.g. in SSR), redirect
-      router.push('/admin/login');
+    if (!isLoading && !isAuthenticated) {
+      router.replace('/admin/login');
     }
-  }, [router]);
+  }, [isLoading, isAuthenticated, router]);
 
-  return isAuthenticated;
-};
-
-
-export default function AdminPage() {
-  const isAuthenticated = useAuth();
-  
-  // Render a loading state or nothing until authentication is confirmed
-  if (!isAuthenticated) {
-    return null; 
+  if (isLoading || !isAuthenticated) {
+     // You can render a loading spinner here or null
+    return null;
   }
-
+  
   return (
     <div className="space-y-6">
        <Card className="fade-in-up">
