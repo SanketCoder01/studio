@@ -10,15 +10,18 @@ type ProjectsSectionProps = {
 
 export function ProjectsSection({ projects }: ProjectsSectionProps) {
   return (
-    <section id="projects" className="py-20 md:py-24 bg-secondary">
+    <section id="projects" className="py-20 md:py-32">
       <div className="container mx-auto px-4">
-        <h2 className="font-headline text-4xl font-bold text-center mb-12">
-          My Projects
-        </h2>
+        <div className="text-center mb-12">
+            <h2 className="font-headline text-4xl font-bold">
+            My Projects
+            </h2>
+            <p className="text-lg text-muted-foreground mt-2">A selection of my work.</p>
+        </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {projects.map((project) => (
-            <Card key={project.id} className="flex flex-col overflow-hidden group">
-              <div className="relative h-48 w-full">
+            <Card key={project.id} className="flex flex-col overflow-hidden group transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+              <div className="relative h-48 w-full overflow-hidden">
                 <Image
                   src={project.imageUrl}
                   alt={project.title}
@@ -31,12 +34,14 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
                 <CardTitle className="font-headline text-2xl">{project.title}</CardTitle>
               </CardHeader>
               <CardContent className="flex-grow flex flex-col">
-                <CardDescription className="flex-grow mb-4">{project.description}</CardDescription>
-                <Button asChild variant="outline">
-                  <a href={project.link} target="_blank" rel="noopener noreferrer">
-                    View Project <ExternalLink className="ml-2 h-4 w-4" />
-                  </a>
-                </Button>
+                <CardDescription className="flex-grow mb-6">{project.description}</CardDescription>
+                <div className='mt-auto'>
+                    <Button asChild variant="outline" className="w-full">
+                    <a href={project.link} target="_blank" rel="noopener noreferrer">
+                        View Project <ExternalLink className="ml-2 h-4 w-4" />
+                    </a>
+                    </Button>
+                </div>
               </CardContent>
             </Card>
           ))}

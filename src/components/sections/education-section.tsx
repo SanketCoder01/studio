@@ -1,5 +1,6 @@
 import type { Education } from '@/lib/types';
-import { GraduationCap, CalendarDays } from 'lucide-react';
+import { GraduationCap, CalendarDays, School } from 'lucide-react';
+import { Card, CardHeader, CardContent } from '@/components/ui/card';
 
 type EducationSectionProps = {
   education: Education[];
@@ -7,26 +8,33 @@ type EducationSectionProps = {
 
 export function EducationSection({ education }: EducationSectionProps) {
   return (
-    <section id="education" className="py-20 md:py-24 bg-secondary">
+    <section id="education" className="py-20 md:py-32">
       <div className="container mx-auto px-4">
-        <h2 className="font-headline text-4xl font-bold text-center mb-12">
-          Education
-        </h2>
-        <div className="max-w-3xl mx-auto grid md:grid-cols-2 gap-8">
+        <div className="text-center mb-12">
+            <h2 className="font-headline text-4xl font-bold">
+            Education
+            </h2>
+            <p className="text-lg text-muted-foreground mt-2">My academic background.</p>
+        </div>
+        <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-8">
           {education.map((edu) => (
-            <div key={edu.id} className="p-6 bg-card rounded-lg shadow-sm border flex flex-col gap-2">
-              <div className="flex items-center gap-3">
-                <div className="bg-primary/10 p-2 rounded-full">
-                    <GraduationCap className="h-6 w-6 text-primary" />
+            <Card key={edu.id} className="group hover:shadow-lg transition-shadow duration-300">
+              <CardHeader className="flex flex-row items-center gap-4">
+                <div className="bg-primary/10 p-3 rounded-full group-hover:bg-primary transition-colors duration-300">
+                    <GraduationCap className="h-8 w-8 text-primary group-hover:text-primary-foreground" />
                 </div>
-                <h3 className="font-headline text-xl font-semibold">{edu.school}</h3>
-              </div>
-              <p className="text-muted-foreground">{edu.degree}</p>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground mt-auto pt-2">
-                <CalendarDays className="h-4 w-4" />
-                <span>{edu.period}</span>
-              </div>
-            </div>
+                <div>
+                  <h3 className="font-headline text-2xl font-semibold">{edu.school}</h3>
+                  <p className="text-muted-foreground">{edu.degree}</p>
+                </div>
+              </CardHeader>
+              <CardContent>
+                 <div className="flex items-center gap-2 text-sm text-muted-foreground mt-2 pt-2 border-t">
+                    <CalendarDays className="h-4 w-4" />
+                    <span>{edu.period}</span>
+                </div>
+              </CardContent>
+            </Card>
           ))}
         </div>
       </div>
