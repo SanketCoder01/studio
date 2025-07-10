@@ -43,6 +43,7 @@ export function LoginForm() {
         description: 'Welcome back, Admin!',
       });
       router.push('/admin');
+      router.refresh(); // This helps ensure the layout re-evaluates the auth state
     } else {
       toast({
         variant: 'destructive',

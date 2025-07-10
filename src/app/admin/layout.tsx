@@ -36,7 +36,7 @@ export default function AdminLayout({
   }, [isLoading, isAuthenticated, router]);
 
   if (isLoading || !isAuthenticated) {
-    // You can render a loading spinner here while checking auth
+    // Render a loading spinner while checking auth state.
     return (
         <div className="flex min-h-screen items-center justify-center bg-background">
             <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
@@ -44,6 +44,7 @@ export default function AdminLayout({
     );
   }
 
+  // If authenticated, render the admin layout with the sidebar and content.
   return (
     <SidebarProvider>
       <Sidebar>

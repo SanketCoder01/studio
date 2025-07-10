@@ -1,7 +1,5 @@
 
 'use client';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ProfileForm } from '@/components/admin/profile-form';
 import { AboutForm } from '@/components/admin/about-form';
@@ -11,23 +9,8 @@ import { InternshipsList } from '@/components/admin/internships-list';
 import { CertificationsList } from '@/components/admin/certifications-list';
 import { ContactList } from '@/components/admin/contact-list';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useAuth } from '@/hooks/use-auth';
 
 export default function AdminPage() {
-  const { isAuthenticated, isLoading } = useAuth();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      router.replace('/admin/login');
-    }
-  }, [isLoading, isAuthenticated, router]);
-
-  if (isLoading || !isAuthenticated) {
-     // You can render a loading spinner here or null
-    return null;
-  }
-  
   return (
     <div className="space-y-6">
        <Card className="fade-in-up">
