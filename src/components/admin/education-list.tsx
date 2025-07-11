@@ -35,12 +35,12 @@ export function EducationList() {
         setIsFormOpen(true);
     };
 
-    const handleFormSubmit = (values: Omit<Education, 'id'> | Education) => {
+    const handleFormSubmit = async (values: Omit<Education, 'id'> | Education) => {
         if ('id' in values) {
-            updateItem(values);
+            await updateItem(values);
             toast({ title: 'Education Updated', description: 'Your education entry has been updated.' });
         } else {
-            addItem(values);
+            await addItem(values);
             toast({ title: 'Education Added', description: 'A new education entry has been added.' });
         }
         setIsFormOpen(false);
@@ -69,7 +69,7 @@ export function EducationList() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {data.education.map((item) => (
+                            {data?.education.map((item) => (
                                 <TableRow key={item.id}>
                                     <TableCell className="font-medium">{item.school}</TableCell>
                                     <TableCell>{item.degree}</TableCell>
@@ -84,7 +84,7 @@ export function EducationList() {
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align="end">
                                                 <DropdownMenuItem onClick={() => handleEdit(item)}>Edit</DropdownMenuItem>
-                                                <DropdownMenuItem onClick={() => handleDelete(item.id)}>Delete</DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => handleDelete(item.id!)}>Delete</DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>
                                     </TableCell>

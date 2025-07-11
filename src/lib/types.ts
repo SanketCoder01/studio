@@ -8,14 +8,14 @@ export type Profile = {
 };
 
 export type Education = {
-  id: string;
+  id?: string;
   school: string;
   degree: string;
   period: string;
 };
 
 export type Internship = {
-  id: string;
+  id?: string;
   company: string;
   role: string;
   period: string;
@@ -23,7 +23,7 @@ export type Internship = {
 };
 
 export type Project = {
-  id: string;
+  id?: string;
   title: string;
   description: string;
   imageUrl: string;
@@ -35,7 +35,7 @@ export type Project = {
 };
 
 export type Certification = {
-  id:string;
+  id?:string;
   name: string;
   issuer: string;
   date: string;

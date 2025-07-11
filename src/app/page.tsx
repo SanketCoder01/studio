@@ -12,7 +12,16 @@ import { Header } from '@/components/header';
 import { usePortfolioData } from '@/hooks/use-portfolio-data';
 
 export default function Home() {
-  const { data } = usePortfolioData();
+  const { data, loading } = usePortfolioData();
+
+  if (loading || !data) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="h-16 w-16 animate-spin rounded-full border-8 border-primary border-t-transparent" />
+      </div>
+    );
+  }
+
   const { profile, education, internships, projects, certifications } = data;
 
   return (

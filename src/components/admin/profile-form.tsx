@@ -23,15 +23,18 @@ export function ProfileForm() {
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: data.profile,
+    defaultValues: data?.profile,
   });
 
   useEffect(() => {
-    form.reset(data.profile);
-  }, [data.profile, form]);
+    if (data?.profile) {
+      form.reset(data.profile);
+    }
+  }, [data?.profile, form]);
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    updateProfile({ ...data.profile, ...values });
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!data?.profile) return;
+    await updateProfile({ ...data.profile, ...values });
     toast({
       title: 'Profile Saved!',
       description: 'Your changes have been saved successfully.',

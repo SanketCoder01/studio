@@ -35,12 +35,12 @@ export function CertificationsList() {
         setIsFormOpen(true);
     };
 
-    const handleFormSubmit = (values: Omit<Certification, 'id'> | Certification) => {
+    const handleFormSubmit = async (values: Omit<Certification, 'id'> | Certification) => {
         if ('id' in values) {
-            updateItem(values);
+            await updateItem(values);
             toast({ title: 'Certification Updated', description: 'Your certification has been updated.' });
         } else {
-            addItem(values);
+            await addItem(values);
             toast({ title: 'Certification Added', description: 'A new certification has been added.' });
         }
         setIsFormOpen(false);
@@ -69,7 +69,7 @@ export function CertificationsList() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {data.certifications.map((item) => (
+                            {data?.certifications.map((item) => (
                                 <TableRow key={item.id}>
                                     <TableCell className="font-medium">{item.name}</TableCell>
                                     <TableCell>{item.issuer}</TableCell>
@@ -84,7 +84,7 @@ export function CertificationsList() {
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align="end">
                                                 <DropdownMenuItem onClick={() => handleEdit(item)}>Edit</DropdownMenuItem>
-                                                <DropdownMenuItem onClick={() => handleDelete(item.id)}>Delete</DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => handleDelete(item.id!)}>Delete</DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>
                                     </TableCell>

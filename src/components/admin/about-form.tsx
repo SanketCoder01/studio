@@ -22,16 +22,19 @@ export function AboutForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      about: data.profile.about,
+      about: data?.profile.about || '',
     },
   });
 
   useEffect(() => {
-    form.reset({ about: data.profile.about });
-  }, [data.profile.about, form]);
+    if (data?.profile.about) {
+      form.reset({ about: data.profile.about });
+    }
+  }, [data?.profile.about, form]);
   
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    updateProfile({ ...data.profile, about: values.about });
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!data?.profile) return;
+    await updateProfile({ ...data.profile, about: values.about });
     toast({
       title: 'About Section Saved!',
       description: 'Your changes have been saved successfully.',

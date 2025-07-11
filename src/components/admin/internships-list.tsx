@@ -35,12 +35,12 @@ export function InternshipsList() {
         setIsFormOpen(true);
     };
 
-    const handleFormSubmit = (values: Omit<Internship, 'id'> | Internship) => {
+    const handleFormSubmit = async (values: Omit<Internship, 'id'> | Internship) => {
         if ('id' in values) {
-            updateItem(values);
+            await updateItem(values);
             toast({ title: 'Internship Updated', description: 'Your internship has been updated.' });
         } else {
-            addItem(values);
+            await addItem(values);
             toast({ title: 'Internship Added', description: 'A new internship has been added.' });
         }
         setIsFormOpen(false);
@@ -69,7 +69,7 @@ export function InternshipsList() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {data.internships.map((item) => (
+                            {data?.internships.map((item) => (
                                 <TableRow key={item.id}>
                                     <TableCell className="font-medium">{item.company}</TableCell>
                                     <TableCell>{item.role}</TableCell>
@@ -84,7 +84,7 @@ export function InternshipsList() {
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align="end">
                                                 <DropdownMenuItem onClick={() => handleEdit(item)}>Edit</DropdownMenuItem>
-                                                <DropdownMenuItem onClick={() => handleDelete(item.id)}>Delete</DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => handleDelete(item.id!)}>Delete</DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>
                                     </TableCell>

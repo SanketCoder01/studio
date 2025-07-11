@@ -35,12 +35,12 @@ export function ProjectsList() {
         setIsFormOpen(true);
     };
 
-    const handleFormSubmit = (values: Omit<Project, 'id'> | Project) => {
+    const handleFormSubmit = async (values: Omit<Project, 'id'> | Project) => {
         if ('id' in values) {
-            updateItem(values);
+            await updateItem(values);
             toast({ title: 'Project Updated', description: 'Your project has been updated.' });
         } else {
-            addItem(values);
+            await addItem(values);
             toast({ title: 'Project Added', description: 'A new project has been added.' });
         }
         setIsFormOpen(false);
@@ -68,7 +68,7 @@ export function ProjectsList() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {data.projects.map((project) => (
+                            {data?.projects.map((project) => (
                                 <TableRow key={project.id}>
                                     <TableCell className="font-medium">{project.title}</TableCell>
                                     <TableCell className="max-w-md truncate">{project.description}</TableCell>
@@ -82,7 +82,7 @@ export function ProjectsList() {
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align="end">
                                                 <DropdownMenuItem onClick={() => handleEdit(project)}>Edit</DropdownMenuItem>
-                                                <DropdownMenuItem onClick={() => handleDelete(project.id)}>Delete</DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => handleDelete(project.id!)}>Delete</DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>
                                     </TableCell>
