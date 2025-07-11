@@ -1,4 +1,8 @@
+
+'use client';
+
 import type { Certification } from '@/lib/types';
+import Image from 'next/image';
 import { Award, CalendarDays } from 'lucide-react';
 
 type CertificationsSectionProps = {
@@ -17,22 +21,25 @@ export function CertificationsSection({ certifications }: CertificationsSectionP
             Recognitions of my skills and dedication to continuous learning.
           </p>
         </div>
-        <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {certifications.map((cert) => (
-            <div key={cert.id} className="group relative p-6 bg-secondary/50 dark:bg-secondary/30 rounded-xl border border-border hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-1">
-              <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"></div>
-              <div className="relative flex items-start gap-6">
-                <div className="bg-primary/10 text-primary p-3 rounded-lg group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">
-                  <Award className="h-8 w-8" />
-                </div>
-                <div className="flex-grow">
-                  <h3 className="font-body text-xl font-semibold mb-1">{cert.name}</h3>
-                  <p className="text-muted-foreground">{cert.issuer}</p>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground mt-3">
-                    <CalendarDays className="h-4 w-4" />
-                    <span>{cert.date}</span>
-                  </div>
-                </div>
+            <div key={cert.id} className="group relative flex flex-col p-6 bg-secondary/50 dark:bg-secondary/30 rounded-xl border border-border hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-1">
+              <div className="relative w-full h-40 rounded-md overflow-hidden mb-4">
+                 <Image
+                  src={cert.imageUrl}
+                  alt={cert.name}
+                  fill
+                  className="object-contain transition-transform duration-300 group-hover:scale-105"
+                  data-ai-hint="certificate document"
+                />
+              </div>
+              <div className="flex-grow">
+                <h3 className="font-body text-xl font-semibold mb-1">{cert.name}</h3>
+                <p className="text-muted-foreground">{cert.issuer}</p>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground mt-3 pt-3 border-t">
+                <CalendarDays className="h-4 w-4" />
+                <span>{cert.date}</span>
               </div>
             </div>
           ))}

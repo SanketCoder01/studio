@@ -1,3 +1,4 @@
+
 export type Profile = {
   name: string;
   avatar: string;
@@ -27,6 +28,10 @@ export type Project = {
   description: string;
   imageUrl: string;
   link: string;
+  introduction: string;
+  technologies: string[];
+  features: string[];
+  reportUrl: string;
 };
 
 export type Certification = {
@@ -34,6 +39,7 @@ export type Certification = {
   name: string;
   issuer: string;
   date: string;
+  imageUrl: string;
 };
 
 export type PortfolioData = {
