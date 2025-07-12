@@ -2,6 +2,8 @@
 'use client';
 
 import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -10,16 +12,26 @@ import { Card, CardContent } from '@/components/ui/card';
 import { usePortfolioData } from '@/hooks/use-portfolio-data';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+
+const formSchema = z.object({
+  name: z.string().min(1, 'Name is required.'),
+  email: z.string().email('A valid email is required.'),
+  message: z.string().min(1, 'Message is required.'),
+});
 
 export function ContactSection() {
   const { contacts: { addItem } } = usePortfolioData();
   const { toast } = useToast();
-  const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm<{name: string, email: string, message: string}>();
   const [isSuccess, setIsSuccess] = useState(false);
 
-  const onSubmit = async (data: { name: string; email: string; message: string }) => {
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: { name: '', email: '', message: '' },
+  });
+
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
-      // Also send to formspree (or any other service if you want)
       const formSpreeResponse = await fetch("https://formspree.io/f/xblynoey", {
         method: 'POST',
         body: JSON.stringify(data),
@@ -30,11 +42,10 @@ export function ContactSection() {
         throw new Error('Formspree submission failed');
       }
 
-      // Save to our database
       await addItem({ ...data, read: false, received: new Date().toISOString() });
       
       setIsSuccess(true);
-      reset();
+      form.reset();
     } catch (error) {
       console.error("Error submitting contact form:", error);
       toast({
@@ -76,30 +87,38 @@ export function ContactSection() {
         <div className="max-w-2xl mx-auto p-2 rounded-xl bg-gradient-to-br from-primary/20 via-transparent to-blue-500/20">
           <Card className="bg-secondary/80 backdrop-blur-sm rounded-lg p-8 md:p-12 border-0">
             <CardContent className="p-0">
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <label htmlFor="name" className="text-sm font-medium">Name</label>
-                    <Input id="name" type="text" placeholder="Your Name" {...register('name', { required: 'Name is required.'})} />
-                    {errors.name && <p className="text-sm font-medium text-destructive">{errors.name.message}</p>}
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <FormField control={form.control} name="name" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Name</FormLabel>
+                        <FormControl><Input {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+                    <FormField control={form.control} name="email" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl><Input {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
                   </div>
-                  <div className="space-y-2">
-                    <label htmlFor="email" className="text-sm font-medium">Email</label>
-                    <Input id="email" type="email" placeholder="your.email@example.com" {...register('email', { required: 'Email is required.'})} />
-                     {errors.email && <p className="text-sm font-medium text-destructive">{errors.email.message}</p>}
+                  <FormField control={form.control} name="message" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Message</FormLabel>
+                      <FormControl><Textarea rows={5} {...field} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                  <div className="text-right">
+                    <Button type="submit" size="lg" className="group" disabled={form.formState.isSubmitting}>
+                      {form.formState.isSubmitting ? 'Sending...' : 'Send Message'} <Send className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                    </Button>
                   </div>
-                </div>
-                <div className="space-y-2">
-                  <label htmlFor="message" className="text-sm font-medium">Message</label>
-                  <Textarea id="message" placeholder="Your message..." rows={5} {...register('message', { required: 'Message is required.'})} />
-                   {errors.message && <p className="text-sm font-medium text-destructive">{errors.message.message}</p>}
-                </div>
-                <div className="text-right">
-                  <Button type="submit" size="lg" className="group" disabled={isSubmitting}>
-                    {isSubmitting ? 'Sending...' : 'Send Message'} <Send className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                </div>
-              </form>
+                </form>
+              </Form>
             </CardContent>
           </Card>
         </div>

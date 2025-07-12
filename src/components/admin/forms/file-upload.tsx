@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { UploadCloud, File as FileIcon, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
 
 type FileUploadProps = {
   value: string;
@@ -18,6 +19,7 @@ type FileUploadProps = {
 export function FileUpload({ value, onChange, folder }: FileUploadProps) {
   const { uploadFile, isUploading, progress } = useStorage();
   const [error, setError] = useState<string | null>(null);
+  const { toast } = useToast();
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     setError(null);
@@ -25,9 +27,14 @@ export function FileUpload({ value, onChange, folder }: FileUploadProps) {
     if (file) {
       try {
         const downloadURL = await uploadFile(file, folder);
-        onChange(downloadURL);
+        onChange(downloadURL); // This is the crucial line to update the form state
       } catch (err) {
         setError('File upload failed. Please try again.');
+        toast({
+          variant: "destructive",
+          title: "Upload Failed",
+          description: "There was an error during the upload process.",
+        });
         console.error(err);
       }
     }
