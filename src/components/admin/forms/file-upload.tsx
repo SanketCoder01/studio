@@ -6,7 +6,7 @@ import { useStorage } from '@/hooks/use-storage';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { UploadCloud, CheckCircle, File as FileIcon, X } from 'lucide-react';
+import { UploadCloud, File as FileIcon, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 type FileUploadProps = {
@@ -49,7 +49,7 @@ export function FileUpload({ value, onChange, folder }: FileUploadProps) {
           rel="noopener noreferrer"
           className="ml-2 text-sm text-primary hover:underline truncate"
         >
-          {value.split('%2F').pop()?.split('?')[0] || 'View File'}
+          {decodeURIComponent(value.split('%2F').pop()?.split('?')[0] || 'View File')}
         </a>
         <Button
           type="button"
@@ -77,10 +77,11 @@ export function FileUpload({ value, onChange, folder }: FileUploadProps) {
           <p className="mb-2 text-sm text-muted-foreground">
             <span className="font-semibold">Click to upload</span> or drag and drop
           </p>
-          <p className="text-xs text-muted-foreground">Any file type, up to 10MB</p>
+          <p className="text-xs text-muted-foreground">JPG, PNG, PDF (MAX. 10MB)</p>
         </div>
         <Input
           type="file"
+          accept="image/jpeg,image/png,application/pdf"
           className="absolute inset-0 w-full h-full opacity-0"
           onChange={handleFileChange}
           disabled={isUploading}
