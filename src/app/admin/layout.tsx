@@ -30,15 +30,11 @@ export default function AdminLayout({
   const router = useRouter();
 
   useEffect(() => {
-    // This effect runs on the client after the auth check is complete.
-    // If the check is done and the user is not authenticated, redirect to login.
     if (isAuthChecked && !isAuthenticated) {
       router.push('/login');
     }
   }, [isAuthChecked, isAuthenticated, router]);
   
-  // While the auth check is running on the client, show a loading spinner.
-  // This prevents the admin layout from flashing for unauthenticated users.
   if (!isAuthChecked) {
     return (
         <div className="flex h-screen w-full items-center justify-center bg-background">
@@ -47,12 +43,10 @@ export default function AdminLayout({
     );
   }
 
-  // If the user is not authenticated, we render null while the redirect happens.
   if (!isAuthenticated) {
     return null;
   }
 
-  // Only render the full layout if the user is authenticated.
   return (
     <SidebarProvider>
       <Sidebar>
