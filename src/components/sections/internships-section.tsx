@@ -2,6 +2,7 @@
 import type { Internship } from '@/lib/types';
 import { BriefcaseBusiness, CalendarDays, MapPin } from 'lucide-react';
 import { format } from 'date-fns';
+import { Button } from '@/components/ui/button';
 
 type InternshipsSectionProps = {
   internships: Internship[];

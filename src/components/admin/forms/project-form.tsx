@@ -21,7 +21,7 @@ const formSchema = z.object({
   introduction: z.string().min(1, 'Introduction is required.'),
   technologies: z.string().min(1, 'Please list at least one technology.'),
   features: z.string().min(1, 'Please list at least one feature.'),
-  reportUrl: z.string().min(1, 'Please upload a project report.'),
+  reportUrl: z.string().optional(),
 });
 
 type ProjectFormProps = {
@@ -65,7 +65,7 @@ export function ProjectForm({ isOpen, onOpenChange, onSubmit, initialData }: Pro
         features: '',
         reportUrl: '',
     });
-  }, [initialData, form]);
+  }, [initialData, form, isOpen]);
 
   const handleSubmit = (values: z.infer<typeof formSchema>) => {
     const processedValues = {
@@ -97,7 +97,7 @@ export function ProjectForm({ isOpen, onOpenChange, onSubmit, initialData }: Pro
              <FormField control={form.control} name="imageUrl" render={({ field: { onChange, value } }) => (
                 <FormItem>
                     <FormLabel>Project Image</FormLabel>
-                    <FormControl><FileUpload value={value} onChange={onChange} folder="projects/images" /></FormControl>
+                    <FormControl><FileUpload key={(initialData?.id || 'new') + 'image'} value={value} onChange={onChange} folder="projects/images" /></FormControl>
                     <FormMessage />
                 </FormItem>
             )} />
@@ -125,8 +125,8 @@ export function ProjectForm({ isOpen, onOpenChange, onSubmit, initialData }: Pro
             )} />
              <FormField control={form.control} name="reportUrl" render={({ field: { onChange, value } }) => (
                 <FormItem>
-                    <FormLabel>Project Report</FormLabel>
-                    <FormControl><FileUpload value={value} onChange={onChange} folder="projects/reports" /></FormControl>
+                    <FormLabel>Project Report (Optional)</FormLabel>
+                    <FormControl><FileUpload key={(initialData?.id || 'new') + 'report'} value={value || ''} onChange={onChange} folder="projects/reports" /></FormControl>
                     <FormMessage />
                 </FormItem>
             )} />

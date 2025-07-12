@@ -34,7 +34,7 @@ export function CertificationForm({ isOpen, onOpenChange, onSubmit, initialData 
 
   useEffect(() => {
     form.reset(initialData || { name: '', issuer: '', date: '', imageUrl: '' });
-  }, [initialData, form]);
+  }, [initialData, form, isOpen]);
 
   const handleSubmit = (values: z.infer<typeof formSchema>) => {
     if (initialData) {
@@ -65,7 +65,7 @@ export function CertificationForm({ isOpen, onOpenChange, onSubmit, initialData 
                 <FormItem>
                   <FormLabel>Certificate Image</FormLabel>
                   <FormControl>
-                    <FileUpload value={value} onChange={onChange} folder="certifications" />
+                    <FileUpload key={initialData?.id || 'new'} value={value} onChange={onChange} folder="certifications" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

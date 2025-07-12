@@ -54,7 +54,7 @@ export function InternshipForm({ isOpen, onOpenChange, onSubmit, initialData }: 
       description: '', 
       certificateUrl: '' 
     });
-  }, [initialData, form]);
+  }, [initialData, form, isOpen]);
 
   const handleSubmit = (values: z.infer<typeof formSchema>) => {
     if (initialData) {
@@ -96,7 +96,7 @@ export function InternshipForm({ isOpen, onOpenChange, onSubmit, initialData }: 
                 <FormItem>
                   <FormLabel>Internship Certificate (Optional)</FormLabel>
                   <FormControl>
-                    <FileUpload value={value || ''} onChange={onChange} folder="internships" />
+                    <FileUpload key={(initialData?.id || 'new') + 'cert'} value={value || ''} onChange={onChange} folder="internships" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

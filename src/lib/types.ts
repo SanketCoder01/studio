@@ -22,7 +22,7 @@ export type Internship = {
   endDate: string;
   location: string;
   description: string;
-  certificateUrl: string;
+  certificateUrl?: string;
 };
 
 export type Project = {
@@ -34,7 +34,7 @@ export type Project = {
   introduction: string;
   technologies: string[];
   features: string[];
-  reportUrl: string;
+  reportUrl?: string;
 };
 
 export type Certification = {

@@ -65,11 +65,13 @@ export function ProjectDetailsModal({ project, isOpen, onOpenChange }: ProjectDe
                       View Live Project <ExternalLink className="ml-2 h-4 w-4" />
                     </a>
                   </Button>
-                  <Button variant="outline" asChild className="w-full">
-                    <a href={project.reportUrl} download>
-                      Download Report <FileDown className="ml-2 h-4 w-4" />
-                    </a>
-                  </Button>
+                  {project.reportUrl && (
+                    <Button variant="outline" asChild className="w-full">
+                      <a href={project.reportUrl} download>
+                        Download Report <FileDown className="ml-2 h-4 w-4" />
+                      </a>
+                    </Button>
+                  )}
             </div>
           </div>
         </div>
