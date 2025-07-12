@@ -1,3 +1,4 @@
+
 'use client';
 
 import { HeroSection } from '@/components/sections/hero-section';
