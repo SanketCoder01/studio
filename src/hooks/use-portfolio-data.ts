@@ -1,3 +1,4 @@
+'use client';
 import { useState, useEffect, useCallback } from 'react';
 import { db } from '@/lib/firebase';
 import {
@@ -20,6 +21,7 @@ import { portfolioData as initialData } from '@/lib/data';
 // This is our in-memory "database"
 let memoryState: PortfolioData | null = null;
 let hasFetched = false;
+let isFetching = false;
 
 // Listeners to notify components of changes
 const listeners: Set<() => void> = new Set();
@@ -30,7 +32,10 @@ const broadcastChanges = () => {
 
 const setData = (newData: PortfolioData | null, fromServer = false) => {
   memoryState = newData;
-  if (fromServer) hasFetched = true;
+  if (fromServer) {
+    hasFetched = true;
+    isFetching = false;
+  }
   broadcastChanges();
 };
 
@@ -57,10 +62,14 @@ async function seedData() {
   await batch.commit();
   console.log("Data seeded successfully!");
   // Refetch data after seeding
-  fetchPortfolioData();
+  fetchPortfolioData(true);
 }
 
-async function fetchPortfolioData() {
+async function fetchPortfolioData(force = false) {
+    if (isFetching || (hasFetched && !force)) return;
+    isFetching = true;
+    broadcastChanges();
+
     try {
         console.log("Fetching data from Firestore...");
         const profileDoc = await getDoc(doc(db, "portfolio", "profile"));
@@ -94,19 +103,20 @@ async function fetchPortfolioData() {
 
 
 export const usePortfolioData = () => {
-  const [data, setDataState] = useState<{data: PortfolioData | null; loading: boolean}>({ data: memoryState, loading: !hasFetched });
+  const [state, setState] = useState({ data: memoryState, loading: !hasFetched || isFetching });
 
   useEffect(() => {
     const listener = () => {
-      setDataState({ data: memoryState, loading: !hasFetched });
+      setState({ data: memoryState, loading: !hasFetched || isFetching });
     };
     listeners.add(listener);
 
-    if (!hasFetched) {
+    // Fetch data if it hasn't been fetched yet
+    if (!hasFetched && !isFetching) {
         fetchPortfolioData();
     }
     
-    // Initial sync
+    // Initial sync with current state
     listener();
 
     return () => {
@@ -138,7 +148,6 @@ export const usePortfolioData = () => {
         }
       } catch (error) {
         console.error(`Failed to add item to ${collectionName}:`, error);
-        // Optionally revert UI changes or show an error
       }
     };
 
@@ -183,9 +192,9 @@ export const usePortfolioData = () => {
   };
 
   return {
-    ...data,
-    updateProfile,
+    ...state,
     seedData,
+    updateProfile,
     education: crudFunction<Education>('education'),
     internships: crudFunction<Internship>('internships'),
     projects: crudFunction<Project>('projects'),
