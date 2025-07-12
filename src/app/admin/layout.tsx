@@ -26,25 +26,30 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isAuthChecked } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    // This effect will run on the client after hydration.
-    // If the auth state is loaded and the user is not authenticated, redirect to login.
-    if (!isLoading && !isAuthenticated) {
+    // This effect runs on the client after the auth check is complete.
+    // If the check is done and the user is not authenticated, redirect to login.
+    if (isAuthChecked && !isAuthenticated) {
       router.push('/login');
     }
-  }, [isLoading, isAuthenticated, router]);
+  }, [isAuthChecked, isAuthenticated, router]);
   
-  // While loading, or if not authenticated, we can render nothing or a minimal skeleton.
-  // This prevents the admin layout from flashing for unauthenticated users before redirection.
-  if (isLoading || !isAuthenticated) {
+  // While the auth check is running on the client, show a loading spinner.
+  // This prevents the admin layout from flashing for unauthenticated users.
+  if (!isAuthChecked) {
     return (
-        <div className="flex min-h-screen items-center justify-center bg-background">
-            {/* You can keep a spinner here for the initial auth check */}
+        <div className="flex h-screen w-full items-center justify-center bg-background">
+            <div className="h-16 w-16 animate-spin rounded-full border-8 border-primary border-t-transparent" />
         </div>
     );
+  }
+
+  // If the user is not authenticated, we render null while the redirect happens.
+  if (!isAuthenticated) {
+    return null;
   }
 
   // Only render the full layout if the user is authenticated.
