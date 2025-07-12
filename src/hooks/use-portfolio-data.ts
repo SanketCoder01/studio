@@ -1,3 +1,4 @@
+
 'use client';
 import { useState, useEffect, useCallback } from 'react';
 import { db } from '@/lib/firebase';
@@ -11,11 +12,10 @@ import {
   updateDoc,
   deleteDoc,
   writeBatch,
-  documentId,
-  query,
-  where
+  orderBy,
+  query
 } from 'firebase/firestore';
-import type { PortfolioData, Profile, Education, Internship, Project, Certification } from '@/lib/types';
+import type { PortfolioData, Profile, Education, Internship, Project, Certification, Contact } from '@/lib/types';
 import { portfolioData as initialData } from '@/lib/data';
 
 // This is our in-memory "database"
@@ -80,10 +80,15 @@ async function fetchPortfolioData(force = false) {
              return;
         }
 
-        const collectionsToFetch = ['education', 'internships', 'projects', 'certifications'];
-        const collectionPromises = collectionsToFetch.map(c => getDocs(collection(db, c)));
+        const collectionsToFetch = ['education', 'internships', 'projects', 'certifications', 'contacts'];
+        const collectionPromises = collectionsToFetch.map(c => {
+          if (c === 'contacts') {
+            return getDocs(query(collection(db, c), orderBy('received', 'desc')));
+          }
+          return getDocs(collection(db, c));
+        });
         
-        const [educationSnapshot, internshipsSnapshot, projectsSnapshot, certificationsSnapshot] = await Promise.all(collectionPromises);
+        const [educationSnapshot, internshipsSnapshot, projectsSnapshot, certificationsSnapshot, contactsSnapshot] = await Promise.all(collectionPromises);
 
         const fetchedData: PortfolioData = {
             profile: profileDoc.data() as Profile,
@@ -91,6 +96,7 @@ async function fetchPortfolioData(force = false) {
             internships: internshipsSnapshot.docs.map(d => ({...d.data(), id: d.id } as Internship)),
             projects: projectsSnapshot.docs.map(d => ({...d.data(), id: d.id } as Project)),
             certifications: certificationsSnapshot.docs.map(d => ({...d.data(), id: d.id } as Certification)),
+            contacts: contactsSnapshot.docs.map(d => ({...d.data(), id: d.id } as Contact)),
         };
 
         setData(fetchedData, true);
@@ -139,16 +145,14 @@ export const usePortfolioData = () => {
   const crudFunction = <T extends { id?: string }>(collectionName: string) => {
     
     const addItem = async (newItem: Omit<T, 'id'>) => {
-      try {
         const docRef = await addDoc(collection(db, collectionName), newItem);
         const itemWithId = { ...newItem, id: docRef.id } as T;
         if (memoryState) {
           const currentItems = (memoryState[collectionName as keyof PortfolioData] || []) as T[];
-          setData({ ...memoryState, [collectionName]: [...currentItems, itemWithId] });
+          const newItems = [itemWithId, ...currentItems]; // Add to the top
+          setData({ ...memoryState, [collectionName]: newItems });
         }
-      } catch (error) {
-        console.error(`Failed to add item to ${collectionName}:`, error);
-      }
+        return itemWithId;
     };
 
     const updateItem = async (updatedItem: T) => {
@@ -199,5 +203,6 @@ export const usePortfolioData = () => {
     internships: crudFunction<Internship>('internships'),
     projects: crudFunction<Project>('projects'),
     certifications: crudFunction<Certification>('certifications'),
+    contacts: crudFunction<Contact>('contacts'),
   };
 };

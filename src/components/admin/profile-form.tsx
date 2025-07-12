@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useForm } from 'react-hook-form';
@@ -15,6 +16,7 @@ const formSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),
   title: z.string().min(5, 'Title must be at least 5 characters.'),
   cvUrl: z.string().url('Must be a valid URL.'),
+  avatar: z.string().url('Must be a valid image URL.'),
 });
 
 export function ProfileForm() {
@@ -63,6 +65,13 @@ export function ProfileForm() {
                 <FormItem>
                   <FormLabel>Title / Headline</FormLabel>
                   <FormControl><Input {...field} /></FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
+             <FormField control={form.control} name="avatar" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Avatar Image URL</FormLabel>
+                  <FormControl><Input placeholder="https://placehold.co/400x400.png" {...field} /></FormControl>
                   <FormMessage />
                 </FormItem>
               )} />

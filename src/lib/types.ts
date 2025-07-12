@@ -1,4 +1,5 @@
 
+
 export type Profile = {
   name: string;
   avatar: string;
@@ -42,10 +43,20 @@ export type Certification = {
   imageUrl: string;
 };
 
+export type Contact = {
+  id?: string;
+  name: string;
+  email: string;
+  message: string;
+  received: string;
+  read: boolean;
+};
+
 export type PortfolioData = {
   profile: Profile;
   education: Education[];
   internships: Internship[];
   projects: Project[];
   certifications: Certification[];
+  contacts: Contact[];
 };
