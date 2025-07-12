@@ -1,5 +1,4 @@
 
-
 export type Profile = {
   name: string;
   avatar: string;
@@ -19,8 +18,11 @@ export type Internship = {
   id?: string;
   company: string;
   role: string;
-  period: string;
+  startDate: string;
+  endDate: string;
+  location: string;
   description: string;
+  certificateUrl: string;
 };
 
 export type Project = {

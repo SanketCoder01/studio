@@ -8,7 +8,7 @@ export const portfolioData: PortfolioData = {
     title: 'Full Stack Developer & AI Enthusiast',
     about:
       "I'm a passionate developer with a knack for creating elegant solutions in the least amount of time. I love diving into new technologies and constantly expanding my skillset. My journey in tech has been driven by a curiosity to understand how things work and a desire to build things that make a difference. Currently exploring the world of AI and its applications.",
-    cvUrl: '#',
+    cvUrl: '',
   },
   education: [
     {
@@ -29,9 +29,12 @@ export const portfolioData: PortfolioData = {
       id: 'int1',
       company: 'Innovate Corp',
       role: 'Software Engineer Intern',
-      period: 'Summer 2022',
+      startDate: '2022-06-01',
+      endDate: '2022-08-31',
+      location: 'Remote',
       description:
         'Worked on the core platform, contributing to both front-end and back-end services. Developed new features, fixed bugs, and participated in the full software development lifecycle.',
+      certificateUrl: '',
     },
   ],
   projects: [
@@ -44,7 +47,7 @@ export const portfolioData: PortfolioData = {
       introduction: 'This project is a comprehensive e-commerce solution designed to provide a seamless shopping experience. It features a modern, responsive interface and a robust backend to manage products, users, and orders.',
       technologies: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Stripe', 'Prisma'],
       features: ['User Authentication (NextAuth)', 'Product Catalog with Filtering', 'Shopping Cart Functionality', 'Secure Checkout with Stripe', 'Admin Dashboard for Product Management'],
-      reportUrl: '#',
+      reportUrl: '',
     },
     {
       id: 'proj2',
@@ -55,7 +58,7 @@ export const portfolioData: PortfolioData = {
       introduction: 'This AI-powered chatbot was developed to automate customer support. It leverages natural language processing to understand user intent and provide accurate, real-time responses, improving efficiency and user satisfaction.',
       technologies: ['Python', 'Flask', 'NLTK', 'React', 'WebSocket'],
       features: ['Natural Language Understanding', 'Real-time Responses', 'Conversation History', 'Integration with Web Interfaces', 'Sentiment Analysis'],
-      reportUrl: '#',
+      reportUrl: '',
     },
      {
       id: 'proj3',
@@ -66,7 +69,7 @@ export const portfolioData: PortfolioData = {
       introduction: 'A personal portfolio website built to showcase my skills and projects. It features a clean, modern design and a custom-built admin panel for easy content management without touching the code.',
       technologies: ['Next.js', 'React', 'TypeScript', 'ShadCN UI', 'Tailwind CSS'],
       features: ['Dynamic Content Management', 'Responsive Design', 'Admin Authentication', 'Light/Dark Mode', 'Interactive UI Components'],
-      reportUrl: '#',
+      reportUrl: '',
     },
   ],
   certifications: [
@@ -85,4 +88,5 @@ export const portfolioData: PortfolioData = {
       imageUrl: 'https://placehold.co/600x400.png',
     },
   ],
+  contacts: [],
 };

@@ -10,12 +10,13 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import type { Certification } from '@/lib/types';
 import { useEffect } from 'react';
+import { FileUpload } from './file-upload';
 
 const formSchema = z.object({
   name: z.string().min(1, 'Name is required.'),
   issuer: z.string().min(1, 'Issuer is required.'),
   date: z.string().min(1, 'Date is required.'),
-  imageUrl: z.string().url('Must be a valid URL.'),
+  imageUrl: z.string().min(1, 'Please upload a certificate image.'),
 });
 
 type CertificationFormProps = {
@@ -60,10 +61,12 @@ export function CertificationForm({ isOpen, onOpenChange, onSubmit, initialData 
             <FormField control={form.control} name="date" render={({ field }) => (
               <FormItem><FormLabel>Date</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
             )} />
-            <FormField control={form.control} name="imageUrl" render={({ field }) => (
+            <FormField control={form.control} name="imageUrl" render={({ field: { onChange, value } }) => (
                 <FormItem>
-                  <FormLabel>Certificate Image URL</FormLabel>
-                  <FormControl><Input placeholder="https://placehold.co/600x400.png" {...field} /></FormControl>
+                  <FormLabel>Certificate Image</FormLabel>
+                  <FormControl>
+                    <FileUpload value={value} onChange={onChange} folder="certifications" />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}

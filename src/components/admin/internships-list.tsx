@@ -10,6 +10,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { useToast } from "@/hooks/use-toast";
 import type { Internship } from '@/lib/types';
 import { InternshipForm } from '@/components/admin/forms/internship-form';
+import { format } from 'date-fns';
 
 export function InternshipsList() {
     const { data, internships: { deleteItem, addItem, updateItem } } = usePortfolioData();
@@ -45,6 +46,16 @@ export function InternshipsList() {
         }
         setIsFormOpen(false);
     };
+    
+    const formatDateRange = (start: string, end: string) => {
+      try {
+        const startDate = format(new Date(start), 'MMM yyyy');
+        const endDate = format(new Date(end), 'MMM yyyy');
+        return `${startDate} - ${endDate}`;
+      } catch {
+        return `${start} - ${end}`
+      }
+    }
 
     return (
         <>
@@ -65,6 +76,7 @@ export function InternshipsList() {
                                 <TableHead>Company</TableHead>
                                 <TableHead>Role</TableHead>
                                 <TableHead>Period</TableHead>
+                                <TableHead>Location</TableHead>
                                 <TableHead className="text-right">Actions</TableHead>
                             </TableRow>
                         </TableHeader>
@@ -73,7 +85,8 @@ export function InternshipsList() {
                                 <TableRow key={item.id}>
                                     <TableCell className="font-medium">{item.company}</TableCell>
                                     <TableCell>{item.role}</TableCell>
-                                    <TableCell>{item.period}</TableCell>
+                                    <TableCell>{formatDateRange(item.startDate, item.endDate)}</TableCell>
+                                    <TableCell>{item.location}</TableCell>
                                     <TableCell className="text-right">
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>

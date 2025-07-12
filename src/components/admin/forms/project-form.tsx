@@ -11,16 +11,17 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import type { Project } from '@/lib/types';
 import { useEffect } from 'react';
+import { FileUpload } from './file-upload';
 
 const formSchema = z.object({
   title: z.string().min(1, 'Title is required.'),
   description: z.string().min(1, 'Description is required.'),
-  imageUrl: z.string().url('Must be a valid URL.'),
+  imageUrl: z.string().min(1, 'Please upload a project image.'),
   link: z.string().url('Must be a valid URL.'),
   introduction: z.string().min(1, 'Introduction is required.'),
   technologies: z.string().min(1, 'Please list at least one technology.'),
   features: z.string().min(1, 'Please list at least one feature.'),
-  reportUrl: z.string().url('Must be a valid URL for the report.'),
+  reportUrl: z.string().min(1, 'Please upload a project report.'),
 });
 
 type ProjectFormProps = {
@@ -45,7 +46,7 @@ export function ProjectForm({ isOpen, onOpenChange, onSubmit, initialData }: Pro
         introduction: '',
         technologies: '',
         features: '',
-        reportUrl: '#',
+        reportUrl: '',
     },
   });
 
@@ -62,7 +63,7 @@ export function ProjectForm({ isOpen, onOpenChange, onSubmit, initialData }: Pro
         introduction: '',
         technologies: '',
         features: '',
-        reportUrl: '#',
+        reportUrl: '',
     });
   }, [initialData, form]);
 
@@ -93,8 +94,12 @@ export function ProjectForm({ isOpen, onOpenChange, onSubmit, initialData }: Pro
              <FormField control={form.control} name="description" render={({ field }) => (
                 <FormItem><FormLabel>Short Description (for card)</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
             )} />
-             <FormField control={form.control} name="imageUrl" render={({ field }) => (
-                <FormItem><FormLabel>Image URL</FormLabel><FormControl><Input placeholder="https://placehold.co/600x400.png" {...field} /></FormControl><FormMessage /></FormItem>
+             <FormField control={form.control} name="imageUrl" render={({ field: { onChange, value } }) => (
+                <FormItem>
+                    <FormLabel>Project Image</FormLabel>
+                    <FormControl><FileUpload value={value} onChange={onChange} folder="projects/images" /></FormControl>
+                    <FormMessage />
+                </FormItem>
             )} />
             <FormField control={form.control} name="link" render={({ field }) => (
                 <FormItem><FormLabel>Live Project Link</FormLabel><FormControl><Input placeholder="https://example.com" {...field} /></FormControl><FormMessage /></FormItem>
@@ -118,8 +123,12 @@ export function ProjectForm({ isOpen, onOpenChange, onSubmit, initialData }: Pro
                     <FormMessage />
                 </FormItem>
             )} />
-             <FormField control={form.control} name="reportUrl" render={({ field }) => (
-                <FormItem><FormLabel>Project Report URL</FormLabel><FormControl><Input placeholder="https://example.com/report.pdf" {...field} /></FormControl><FormMessage /></FormItem>
+             <FormField control={form.control} name="reportUrl" render={({ field: { onChange, value } }) => (
+                <FormItem>
+                    <FormLabel>Project Report</FormLabel>
+                    <FormControl><FileUpload value={value} onChange={onChange} folder="projects/reports" /></FormControl>
+                    <FormMessage />
+                </FormItem>
             )} />
             <Button type="submit">Save</Button>
           </form>

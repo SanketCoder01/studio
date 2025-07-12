@@ -11,12 +11,16 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import type { Internship } from '@/lib/types';
 import { useEffect } from 'react';
+import { FileUpload } from './file-upload';
 
 const formSchema = z.object({
   company: z.string().min(1, 'Company name is required.'),
   role: z.string().min(1, 'Role is required.'),
-  period: z.string().min(1, 'Period is required.'),
+  startDate: z.string().min(1, 'Start date is required.'),
+  endDate: z.string().min(1, 'End date is required.'),
+  location: z.string().min(1, 'Location is required.'),
   description: z.string().min(1, 'Description is required.'),
+  certificateUrl: z.string().optional(),
 });
 
 type InternshipFormProps = {
@@ -29,11 +33,27 @@ type InternshipFormProps = {
 export function InternshipForm({ isOpen, onOpenChange, onSubmit, initialData }: InternshipFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: initialData || { company: '', role: '', period: '', description: '' },
+    defaultValues: initialData || { 
+      company: '', 
+      role: '', 
+      startDate: '',
+      endDate: '',
+      location: '',
+      description: '', 
+      certificateUrl: '' 
+    },
   });
 
    useEffect(() => {
-    form.reset(initialData || { company: '', role: '', period: '', description: '' });
+    form.reset(initialData || { 
+      company: '', 
+      role: '', 
+      startDate: '',
+      endDate: '',
+      location: '',
+      description: '', 
+      certificateUrl: '' 
+    });
   }, [initialData, form]);
 
   const handleSubmit = (values: z.infer<typeof formSchema>) => {
@@ -46,7 +66,7 @@ export function InternshipForm({ isOpen, onOpenChange, onSubmit, initialData }: 
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{initialData ? 'Edit' : 'Add'} Internship</DialogTitle>
         </DialogHeader>
@@ -58,12 +78,30 @@ export function InternshipForm({ isOpen, onOpenChange, onSubmit, initialData }: 
             <FormField control={form.control} name="role" render={({ field }) => (
                 <FormItem><FormLabel>Role</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
             )} />
-            <FormField control={form.control} name="period" render={({ field }) => (
-                <FormItem><FormLabel>Period</FormLabel><FormControl><Input placeholder="e.g., Summer 2023" {...field} /></FormControl><FormMessage /></FormItem>
+            <div className="grid grid-cols-2 gap-4">
+              <FormField control={form.control} name="startDate" render={({ field }) => (
+                  <FormItem><FormLabel>Start Date</FormLabel><FormControl><Input type="date" {...field} /></FormControl><FormMessage /></FormItem>
+              )} />
+              <FormField control={form.control} name="endDate" render={({ field }) => (
+                  <FormItem><FormLabel>End Date</FormLabel><FormControl><Input type="date" {...field} /></FormControl><FormMessage /></FormItem>
+              )} />
+            </div>
+             <FormField control={form.control} name="location" render={({ field }) => (
+                <FormItem><FormLabel>Location</FormLabel><FormControl><Input placeholder="e.g., Remote or City, Country" {...field} /></FormControl><FormMessage /></FormItem>
             )} />
             <FormField control={form.control} name="description" render={({ field }) => (
                 <FormItem><FormLabel>Description</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
             )} />
+             <FormField control={form.control} name="certificateUrl" render={({ field: { onChange, value } }) => (
+                <FormItem>
+                  <FormLabel>Internship Certificate (Optional)</FormLabel>
+                  <FormControl>
+                    <FileUpload value={value || ''} onChange={onChange} folder="internships" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <Button type="submit">Save</Button>
           </form>
         </Form>

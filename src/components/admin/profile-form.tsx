@@ -11,12 +11,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useToast } from '@/hooks/use-toast';
 import { usePortfolioData } from '@/hooks/use-portfolio-data';
 import { useEffect } from 'react';
+import { FileUpload } from '@/components/admin/forms/file-upload';
 
 const formSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),
   title: z.string().min(5, 'Title must be at least 5 characters.'),
-  cvUrl: z.string().url('Must be a valid URL.'),
-  avatar: z.string().url('Must be a valid image URL.'),
+  cvUrl: z.string().min(1, 'Please upload your CV.'),
+  avatar: z.string().min(1, 'Please upload an avatar image.'),
 });
 
 export function ProfileForm() {
@@ -68,17 +69,21 @@ export function ProfileForm() {
                   <FormMessage />
                 </FormItem>
               )} />
-             <FormField control={form.control} name="avatar" render={({ field }) => (
+             <FormField control={form.control} name="avatar" render={({ field: { onChange, value } }) => (
                 <FormItem>
-                  <FormLabel>Avatar Image URL</FormLabel>
-                  <FormControl><Input placeholder="https://placehold.co/400x400.png" {...field} /></FormControl>
+                  <FormLabel>Avatar Image</FormLabel>
+                  <FormControl>
+                    <FileUpload value={value} onChange={onChange} folder="avatars" />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )} />
-            <FormField control={form.control} name="cvUrl" render={({ field }) => (
+            <FormField control={form.control} name="cvUrl" render={({ field: { onChange, value } }) => (
                 <FormItem>
-                  <FormLabel>CV URL</FormLabel>
-                  <FormControl><Input {...field} /></FormControl>
+                  <FormLabel>Your CV</FormLabel>
+                  <FormControl>
+                    <FileUpload value={value} onChange={onChange} folder="cvs" />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )} />

@@ -1,11 +1,23 @@
+
 import type { Internship } from '@/lib/types';
-import { BriefcaseBusiness, CalendarDays } from 'lucide-react';
+import { BriefcaseBusiness, CalendarDays, MapPin } from 'lucide-react';
+import { format } from 'date-fns';
 
 type InternshipsSectionProps = {
   internships: Internship[];
 };
 
 export function InternshipsSection({ internships }: InternshipsSectionProps) {
+    const formatDateRange = (start: string, end: string) => {
+      try {
+        const startDate = format(new Date(start), 'MMM yyyy');
+        const endDate = format(new Date(end), 'MMM yyyy');
+        return `${startDate} - ${endDate}`;
+      } catch {
+        return `${start} - ${end}`
+      }
+    }
+
   return (
     <section id="internships" className="py-20 md:py-32 bg-secondary/50 dark:bg-secondary/30 fade-in-up">
       <div className="container mx-auto px-4">
@@ -25,14 +37,14 @@ export function InternshipsSection({ internships }: InternshipsSectionProps) {
                 <div className="md:w-1/2 md:pr-8">
                   {index % 2 === 0 ? (
                     <div className="p-6 bg-background rounded-xl border border-border shadow-md hover:shadow-primary/20 hover:border-primary/50 transition-all duration-300 hover:-translate-y-1">
-                      <InternshipCardContent internship={internship} />
+                      <InternshipCardContent internship={internship} formatDateRange={formatDateRange} />
                     </div>
                   ) : <div></div>}
                 </div>
                 <div className="md:w-1/2 md:pl-8">
                   {index % 2 !== 0 ? (
                      <div className="p-6 bg-background rounded-xl border border-border shadow-md hover:shadow-primary/20 hover:border-primary/50 transition-all duration-300 hover:-translate-y-1">
-                      <InternshipCardContent internship={internship} />
+                      <InternshipCardContent internship={internship} formatDateRange={formatDateRange} />
                     </div>
                   ) : <div></div>}
                 </div>
@@ -46,17 +58,28 @@ export function InternshipsSection({ internships }: InternshipsSectionProps) {
   );
 }
 
-const InternshipCardContent = ({ internship }: { internship: Internship }) => (
+const InternshipCardContent = ({ internship, formatDateRange }: { internship: Internship, formatDateRange: (start:string, end:string) => string }) => (
   <>
     <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
       <BriefcaseBusiness className="h-4 w-4" />
       <span>{internship.company}</span>
     </div>
     <h3 className="font-headline text-xl font-semibold mb-2">{internship.role}</h3>
-    <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
-      <CalendarDays className="h-4 w-4" />
-      <span>{internship.period}</span>
+    <div className="flex items-start gap-4 text-sm text-muted-foreground mb-4 flex-wrap">
+        <div className="flex items-center gap-2">
+            <CalendarDays className="h-4 w-4" />
+            <span>{formatDateRange(internship.startDate, internship.endDate)}</span>
+        </div>
+        <div className="flex items-center gap-2">
+            <MapPin className="h-4 w-4" />
+            <span>{internship.location}</span>
+        </div>
     </div>
     <p className="text-foreground/80 text-sm">{internship.description}</p>
+     {internship.certificateUrl && (
+        <Button variant="link" asChild className="p-0 h-auto mt-4 text-sm">
+            <a href={internship.certificateUrl} target="_blank" rel="noopener noreferrer">View Certificate</a>
+        </Button>
+    )}
   </>
 );
