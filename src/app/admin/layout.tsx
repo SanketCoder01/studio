@@ -18,7 +18,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { LogoutButton } from '@/components/auth/logout-button';
 import { useAuth } from '@/hooks/use-auth';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 export default function AdminLayout({
@@ -28,19 +28,12 @@ export default function AdminLayout({
 }) {
   const { isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
-  const pathname = usePathname();
-
-  const isLoginPage = pathname === '/admin/login';
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated && !isLoginPage) {
-      router.push('/admin/login');
+    if (!isLoading && !isAuthenticated) {
+      router.push('/login');
     }
-  }, [isLoading, isAuthenticated, router, isLoginPage]);
-
-  if (isLoginPage) {
-    return <>{children}</>;
-  }
+  }, [isLoading, isAuthenticated, router]);
 
   if (isLoading || !isAuthenticated) {
     return (

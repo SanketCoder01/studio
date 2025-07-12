@@ -21,7 +21,7 @@ export function LogoutButton() {
       title: 'Logged Out',
       description: 'You have been successfully logged out.',
     });
-    router.push('/admin/login');
+    router.push('/login');
   };
 
   return (

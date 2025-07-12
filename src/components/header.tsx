@@ -73,7 +73,7 @@ export function Header() {
                   </Button>
                 ))}
                  <Button asChild className="mt-4">
-                    <Link href="/admin/login">Admin Login</Link>
+                    <Link href="/login">Admin Login</Link>
                 </Button>
               </div>
             </SheetContent>

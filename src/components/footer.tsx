@@ -22,7 +22,7 @@ export function Footer() {
             </a>
           </Button>
           <Button variant="outline" asChild>
-            <Link href="/admin/login">Admin Login</Link>
+            <Link href="/login">Admin Login</Link>
           </Button>
         </div>
       </div>
