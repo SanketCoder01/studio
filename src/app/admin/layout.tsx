@@ -1,5 +1,7 @@
 
 'use client';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   SidebarProvider,
   Sidebar,
@@ -18,8 +20,6 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { LogoutButton } from '@/components/auth/logout-button';
 import { useAuth } from '@/hooks/use-auth';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 
 export default function AdminLayout({
   children,
@@ -30,11 +30,13 @@ export default function AdminLayout({
   const router = useRouter();
 
   useEffect(() => {
+    // Wait until the auth check is complete
     if (isAuthChecked && !isAuthenticated) {
       router.push('/login');
     }
   }, [isAuthChecked, isAuthenticated, router]);
   
+  // While checking auth status, show a loading spinner
   if (!isAuthChecked) {
     return (
         <div className="flex h-screen w-full items-center justify-center bg-background">
@@ -43,10 +45,13 @@ export default function AdminLayout({
     );
   }
 
+  // If not authenticated, the useEffect above will redirect, so we can return null or a loader.
+  // Returning null prevents a brief flash of the layout before redirection.
   if (!isAuthenticated) {
     return null;
   }
 
+  // If authenticated, render the layout and children
   return (
     <SidebarProvider>
       <Sidebar>

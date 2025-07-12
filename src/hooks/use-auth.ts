@@ -1,11 +1,12 @@
 'use client';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 
 export const useAuth = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAuthChecked, setIsAuthChecked] = useState(false);
 
   useEffect(() => {
+    // This effect runs only on the client after hydration
     try {
       const authStatus = sessionStorage.getItem('isAuthenticated');
       setIsAuthenticated(authStatus === 'true');
