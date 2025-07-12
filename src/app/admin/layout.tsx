@@ -30,23 +30,25 @@ export default function AdminLayout({
   const router = useRouter();
 
   useEffect(() => {
+    // This effect will run on the client after hydration.
+    // If the auth state is loaded and the user is not authenticated, redirect to login.
     if (!isLoading && !isAuthenticated) {
       router.push('/login');
     }
   }, [isLoading, isAuthenticated, router]);
   
-  if (isLoading) {
+  // While loading, or if not authenticated, we can render nothing or a minimal skeleton.
+  // This prevents the admin layout from flashing for unauthenticated users before redirection.
+  if (isLoading || !isAuthenticated) {
     return (
         <div className="flex min-h-screen items-center justify-center bg-background">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+            {/* You can keep a spinner here for the initial auth check */}
         </div>
     );
   }
 
-  // Only render the layout for authenticated users.
-  // The redirect in the useEffect will handle unauthenticated users.
-  // This prevents flashing the layout before redirecting.
-  return isAuthenticated ? (
+  // Only render the full layout if the user is authenticated.
+  return (
     <SidebarProvider>
       <Sidebar>
         <SidebarHeader>
@@ -117,5 +119,5 @@ export default function AdminLayout({
         <main className="p-4 md:p-6">{children}</main>
       </SidebarInset>
     </SidebarProvider>
-  ) : null;
+  );
 }

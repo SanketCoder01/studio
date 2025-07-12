@@ -16,9 +16,8 @@ import { useState } from 'react';
 import { Upload } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 
-export default function AdminPage() {
+function AdminDashboard() {
   const { data, loading, seedData } = usePortfolioData();
-  const { isAuthenticated, isLoading: isAuthLoading } = useAuth();
   const { toast } = useToast();
   const [isSeeding, setIsSeeding] = useState(false);
 
@@ -42,21 +41,16 @@ export default function AdminPage() {
     }
   };
 
-  if (loading || isAuthLoading) {
+  if (loading) {
     return (
       <div className="flex h-full min-h-[50vh] w-full items-center justify-center">
         <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent" />
       </div>
     );
   }
-  
-  // This check is redundant due to AdminLayout but provides an extra layer of safety
-  if (!isAuthenticated) {
-    return null;
-  }
 
   return (
-    <div className="space-y-6">
+     <div className="space-y-6">
        <Card className="fade-in-up">
         <CardHeader>
           <div className="flex justify-between items-center">
@@ -106,4 +100,25 @@ export default function AdminPage() {
       )}
     </div>
   );
+}
+
+export default function AdminPage() {
+  const { isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <div className="h-16 w-16 animate-spin rounded-full border-8 border-primary border-t-transparent" />
+      </div>
+    );
+  }
+  
+  // The AdminLayout handles the redirection if not authenticated.
+  // We just need to ensure we don't render the dashboard content until authenticated.
+  if (isAuthenticated) {
+    return <AdminDashboard />;
+  }
+  
+  // The layout's useEffect will redirect, so we can return null here.
+  return null;
 }
