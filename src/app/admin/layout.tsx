@@ -34,8 +34,8 @@ export default function AdminLayout({
       router.push('/login');
     }
   }, [isLoading, isAuthenticated, router]);
-
-  if (isLoading || !isAuthenticated) {
+  
+  if (isLoading) {
     return (
         <div className="flex min-h-screen items-center justify-center bg-background">
             <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
@@ -43,7 +43,10 @@ export default function AdminLayout({
     );
   }
 
-  return (
+  // Only render the layout for authenticated users.
+  // The redirect in the useEffect will handle unauthenticated users.
+  // This prevents flashing the layout before redirecting.
+  return isAuthenticated ? (
     <SidebarProvider>
       <Sidebar>
         <SidebarHeader>
@@ -114,5 +117,5 @@ export default function AdminLayout({
         <main className="p-4 md:p-6">{children}</main>
       </SidebarInset>
     </SidebarProvider>
-  );
+  ) : null;
 }

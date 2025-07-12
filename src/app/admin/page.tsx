@@ -14,9 +14,11 @@ import { usePortfolioData } from '@/hooks/use-portfolio-data';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 import { Upload } from 'lucide-react';
+import { useAuth } from '@/hooks/use-auth';
 
 export default function AdminPage() {
   const { data, loading, seedData } = usePortfolioData();
+  const { isAuthenticated, isLoading: isAuthLoading } = useAuth();
   const { toast } = useToast();
   const [isSeeding, setIsSeeding] = useState(false);
 
@@ -40,12 +42,17 @@ export default function AdminPage() {
     }
   };
 
-  if (loading) {
+  if (loading || isAuthLoading) {
     return (
       <div className="flex h-full min-h-[50vh] w-full items-center justify-center">
         <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent" />
       </div>
     );
+  }
+  
+  // This check is redundant due to AdminLayout but provides an extra layer of safety
+  if (!isAuthenticated) {
+    return null;
   }
 
   return (
