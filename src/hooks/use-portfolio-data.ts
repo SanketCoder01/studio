@@ -1,7 +1,7 @@
 
 'use client';
 import { useState, useEffect, useCallback } from 'react';
-import { db } from '@/lib/firebase';
+import { db, storage, initializeDb } from '@/lib/firebase';
 import {
   collection,
   doc,
@@ -40,6 +40,8 @@ const setData = (newData: PortfolioData | null, fromServer = false) => {
 };
 
 async function seedData() {
+  const db = initializeDb();
+  if (!db) return;
   console.log("Seeding data to Firestore...");
   const batch = writeBatch(db);
 
@@ -69,6 +71,13 @@ async function fetchPortfolioData(force = false) {
     if (isFetching || (hasFetched && !force)) return;
     isFetching = true;
     broadcastChanges();
+
+    const db = initializeDb();
+    if (!db) {
+        isFetching = false;
+        broadcastChanges();
+        return;
+    }
 
     try {
         console.log("Fetching data from Firestore...");
@@ -117,12 +126,10 @@ export const usePortfolioData = () => {
     };
     listeners.add(listener);
 
-    // Fetch data if it hasn't been fetched yet
     if (!hasFetched && !isFetching) {
         fetchPortfolioData();
     }
     
-    // Initial sync with current state
     listener();
 
     return () => {
@@ -130,19 +137,12 @@ export const usePortfolioData = () => {
     };
   }, []);
 
-  const updateProfile = useCallback(async (newProfile: Profile) => {
-    if (!memoryState) return;
-    const oldProfile = memoryState.profile;
-    setData({ ...memoryState, profile: newProfile }); // Optimistic update
-    try {
-      await setDoc(doc(db, "portfolio", "profile"), newProfile);
-    } catch (error) {
-      console.error("Failed to update profile:", error);
-      setData({ ...memoryState, profile: oldProfile }); // Revert
-    }
-  }, []);
-
   const crudFunction = <T extends { id?: string }>(collectionName: string) => {
+    const db = initializeDb();
+    if (!db) {
+        const noOp = async () => { console.error("Firebase not initialized"); };
+        return { addItem: noOp, updateItem: noOp, deleteItem: noOp };
+    }
     
     const addItem = async (newItem: Omit<T, 'id'>) => {
         const docRef = await addDoc(collection(db, collectionName), newItem);
@@ -194,6 +194,19 @@ export const usePortfolioData = () => {
 
     return { addItem, updateItem, deleteItem };
   };
+
+  const updateProfile = useCallback(async (newProfile: Profile) => {
+    const db = initializeDb();
+    if (!db || !memoryState) return;
+    const oldProfile = memoryState.profile;
+    setData({ ...memoryState, profile: newProfile }); // Optimistic update
+    try {
+      await setDoc(doc(db, "portfolio", "profile"), newProfile);
+    } catch (error) {
+      console.error("Failed to update profile:", error);
+      setData({ ...memoryState, profile: oldProfile }); // Revert
+    }
+  }, []);
 
   return {
     ...state,

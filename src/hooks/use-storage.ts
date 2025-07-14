@@ -2,8 +2,8 @@
 'use client';
 
 import { useState } from 'react';
-import { storage } from '@/lib/firebase';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { initializeDb } from '@/lib/firebase';
+import { ref, uploadBytesResumable, getDownloadURL, getStorage } from 'firebase/storage';
 import { useToast } from './use-toast';
 
 export const useStorage = () => {
@@ -13,6 +13,21 @@ export const useStorage = () => {
 
   const uploadFile = (file: File, folder: string = 'uploads'): Promise<string> => {
     return new Promise((resolve, reject) => {
+      const db = initializeDb();
+      if (!db) {
+        const error = 'Firebase is not initialized.';
+        console.error(error);
+        toast({
+          variant: "destructive",
+          title: "Upload Failed",
+          description: error,
+        });
+        reject(error);
+        return;
+      }
+      
+      const storage = getStorage();
+
       if (!file) {
         reject('No file provided.');
         return;
@@ -27,8 +42,8 @@ export const useStorage = () => {
       uploadTask.on(
         'state_changed',
         (snapshot) => {
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          setProgress(progress);
+          const currentProgress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          setProgress(currentProgress);
         },
         (error) => {
           console.error("Upload failed:", error);
