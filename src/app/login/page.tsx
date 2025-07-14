@@ -1,5 +1,28 @@
-import { LoginForm } from '@/components/auth/login-form';
+
+'use client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import dynamic from 'next/dynamic';
+import { Skeleton } from '@/components/ui/skeleton';
+
+const LoginForm = dynamic(
+  () => import('@/components/auth/login-form').then(mod => mod.LoginForm),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="space-y-6">
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-20" />
+          <Skeleton className="h-10 w-full" />
+        </div>
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-20" />
+          <Skeleton className="h-10 w-full" />
+        </div>
+        <Skeleton className="h-10 w-full" />
+      </div>
+    ),
+  }
+);
 
 export default function LoginPage() {
   return (
