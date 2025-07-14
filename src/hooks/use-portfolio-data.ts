@@ -1,7 +1,7 @@
 
 'use client';
 import { useState, useEffect, useCallback } from 'react';
-import { db, storage, initializeDb } from '@/lib/firebase';
+import { initializeDb } from '@/lib/firebase';
 import {
   collection,
   doc,
@@ -13,7 +13,8 @@ import {
   deleteDoc,
   writeBatch,
   orderBy,
-  query
+  query,
+  Firestore
 } from 'firebase/firestore';
 import type { PortfolioData, Profile, Education, Internship, Project, Certification, Contact } from '@/lib/types';
 import { portfolioData as initialData } from '@/lib/data';
@@ -55,7 +56,7 @@ async function seedData() {
       const collectionName = key;
       const items = initialData[key as keyof PortfolioData] as any[];
       items.forEach((item) => {
-        const docRef = doc(collection(db, collectionName), item.id);
+        const docRef = doc(collection(db, collectionName));
         batch.set(docRef, item);
       });
     }
@@ -74,6 +75,7 @@ async function fetchPortfolioData(force = false) {
 
     const db = initializeDb();
     if (!db) {
+        console.error("Firestore is not initialized. Cannot fetch data.");
         isFetching = false;
         broadcastChanges();
         return;
@@ -121,16 +123,18 @@ export const usePortfolioData = () => {
   const [state, setState] = useState({ data: memoryState, loading: !hasFetched || isFetching });
 
   useEffect(() => {
+    // Initialize DB and fetch data on mount if needed
+    const db = initializeDb();
+    if (db && !hasFetched && !isFetching) {
+      fetchPortfolioData();
+    }
+    
     const listener = () => {
       setState({ data: memoryState, loading: !hasFetched || isFetching });
     };
-    listeners.add(listener);
 
-    if (!hasFetched && !isFetching) {
-        fetchPortfolioData();
-    }
-    
-    listener();
+    listeners.add(listener);
+    listener(); // Immediately update state on mount
 
     return () => {
       listeners.delete(listener);
@@ -138,13 +142,10 @@ export const usePortfolioData = () => {
   }, []);
 
   const crudFunction = <T extends { id?: string }>(collectionName: string) => {
-    const db = initializeDb();
-    if (!db) {
-        const noOp = async () => { console.error("Firebase not initialized"); };
-        return { addItem: noOp, updateItem: noOp, deleteItem: noOp };
-    }
+    const db: Firestore | undefined = initializeDb();
     
     const addItem = async (newItem: Omit<T, 'id'>) => {
+        if (!db) { throw new Error("Firestore not initialized"); }
         const docRef = await addDoc(collection(db, collectionName), newItem);
         const itemWithId = { ...newItem, id: docRef.id } as T;
         if (memoryState) {
@@ -156,6 +157,7 @@ export const usePortfolioData = () => {
     };
 
     const updateItem = async (updatedItem: T) => {
+      if (!db) { throw new Error("Firestore not initialized"); }
       if (!updatedItem.id) return;
       const { id, ...itemData } = updatedItem;
       const docRef = doc(db, collectionName, id);
@@ -176,6 +178,7 @@ export const usePortfolioData = () => {
     };
 
     const deleteItem = async (id: string) => {
+       if (!db) { throw new Error("Firestore not initialized"); }
        if (!id) return;
        let oldItems: T[] = [];
        if(memoryState) {
@@ -219,3 +222,4 @@ export const usePortfolioData = () => {
     contacts: crudFunction<Contact>('contacts'),
   };
 };
+
