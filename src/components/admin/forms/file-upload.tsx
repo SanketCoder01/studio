@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useStorage } from '@/hooks/use-storage';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -21,13 +21,13 @@ export function FileUpload({ value, onChange, folder }: FileUploadProps) {
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
     setError(null);
     const file = event.target.files?.[0];
     if (file) {
       try {
         const downloadURL = await uploadFile(file, folder);
-        onChange(downloadURL); // This is the crucial line to update the form state
+        onChange(downloadURL); 
       } catch (err) {
         setError('File upload failed. Please try again.');
         toast({
@@ -38,7 +38,7 @@ export function FileUpload({ value, onChange, folder }: FileUploadProps) {
         console.error(err);
       }
     }
-  };
+  }, [folder, onChange, toast, uploadFile]);
 
   const handleRemove = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();

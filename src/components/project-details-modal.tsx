@@ -67,7 +67,7 @@ export function ProjectDetailsModal({ project, isOpen, onOpenChange }: ProjectDe
                   </Button>
                   {project.reportUrl && (
                     <Button variant="outline" asChild className="w-full">
-                      <a href={project.reportUrl} download>
+                      <a href={project.reportUrl} download target="_blank" rel="noopener noreferrer">
                         Download Report <FileDown className="ml-2 h-4 w-4" />
                       </a>
                     </Button>
