@@ -34,7 +34,10 @@ export const portfolioData: PortfolioData = {
       location: 'Remote',
       description:
         'Worked on the core platform, contributing to both front-end and back-end services. Developed new features, fixed bugs, and participated in the full software development lifecycle.',
+      memories: 'This was a fantastic learning experience where I got to collaborate with senior engineers and contribute to a real-world product. One of my favorite memories was the weekly demo day where we showcased our work to the entire team.',
+      images: ['https://placehold.co/600x400.png', 'https://placehold.co/600x400.png'],
       certificateUrl: '',
+      reportUrl: '',
     },
   ],
   projects: [

@@ -22,7 +22,10 @@ export type Internship = {
   endDate: string;
   location: string;
   description: string;
+  memories: string;
+  images: string[];
   certificateUrl?: string;
+  reportUrl?: string;
 };
 
 export type Project = {

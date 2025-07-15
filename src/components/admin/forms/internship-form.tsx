@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import type { Internship } from '@/lib/types';
 import { useEffect } from 'react';
 import { FileUpload } from './file-upload';
+import { MultiImageUpload } from './multi-image-upload';
 
 const formSchema = z.object({
   company: z.string().min(1, 'Company name is required.'),
@@ -20,7 +21,10 @@ const formSchema = z.object({
   endDate: z.string().min(1, 'End date is required.'),
   location: z.string().min(1, 'Location is required.'),
   description: z.string().min(1, 'Description is required.'),
+  memories: z.string().min(1, 'Memories are required.'),
+  images: z.array(z.string()).min(1, 'Please upload at least one image.'),
   certificateUrl: z.string().optional(),
+  reportUrl: z.string().optional(),
 });
 
 type InternshipFormProps = {
@@ -36,8 +40,11 @@ const defaultValues = {
     startDate: '',
     endDate: '',
     location: '',
-    description: '', 
-    certificateUrl: '' 
+    description: '',
+    memories: '',
+    images: [],
+    certificateUrl: '',
+    reportUrl: ''
 };
 
 export function InternshipForm({ isOpen, onOpenChange, onSubmit, initialData }: InternshipFormProps) {
@@ -86,13 +93,34 @@ export function InternshipForm({ isOpen, onOpenChange, onSubmit, initialData }: 
                 <FormItem><FormLabel>Location</FormLabel><FormControl><Input placeholder="e.g., Remote or City, Country" {...field} /></FormControl><FormMessage /></FormItem>
             )} />
             <FormField control={form.control} name="description" render={({ field }) => (
-                <FormItem><FormLabel>Description</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
+                <FormItem><FormLabel>Work Description</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
             )} />
+             <FormField control={form.control} name="memories" render={({ field }) => (
+                <FormItem><FormLabel>Memories & Learnings</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
+            )} />
+             <FormField control={form.control} name="images" render={({ field: { onChange, value } }) => (
+                <FormItem>
+                  <FormLabel>Image Gallery</FormLabel>
+                  <FormControl>
+                    <MultiImageUpload key={(initialData?.id || 'new') + '-gallery'} value={value} onChange={onChange} folder="internships/gallery" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
+             <FormField control={form.control} name="reportUrl" render={({ field: { onChange, value } }) => (
+                <FormItem>
+                  <FormLabel>Internship Report (Optional, PDF/DOCX)</FormLabel>
+                  <FormControl>
+                    <FileUpload key={(initialData?.id || 'new') + '-report'} value={value || ''} onChange={onChange} folder="internships/reports" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
              <FormField control={form.control} name="certificateUrl" render={({ field: { onChange, value } }) => (
                 <FormItem>
                   <FormLabel>Internship Certificate (Optional)</FormLabel>
                   <FormControl>
-                    <FileUpload key={(initialData?.id || 'new') + '-cert'} value={value || ''} onChange={onChange} folder="internships" />
+                    <FileUpload key={(initialData?.id || 'new') + '-cert'} value={value || ''} onChange={onChange} folder="internships/certs" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
