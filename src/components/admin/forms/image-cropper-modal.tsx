@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import ReactCrop, { type Crop, centerCrop, makeAspectCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
@@ -13,19 +13,24 @@ interface ImageCropperModalProps {
   onComplete: (dataUrl: string) => void;
 }
 
+const ASPECT_RATIO = 1;
+const MIN_DIMENSION = 150;
+
 export function ImageCropperModal({ src, onClose, onComplete }: ImageCropperModalProps) {
   const [crop, setCrop] = useState<Crop>();
   const imgRef = useRef<HTMLImageElement>(null);
 
   function onImageLoad(e: React.SyntheticEvent<HTMLImageElement>) {
     const { width, height } = e.currentTarget;
+    const cropWidthInPercent = (MIN_DIMENSION / width) * 100;
+
     const newCrop = centerCrop(
       makeAspectCrop(
         {
           unit: '%',
-          width: 90,
+          width: cropWidthInPercent,
         },
-        1, // aspect ratio 1:1
+        ASPECT_RATIO,
         width,
         height
       ),
@@ -44,8 +49,8 @@ export function ImageCropperModal({ src, onClose, onComplete }: ImageCropperModa
     const scaleX = imgRef.current.naturalWidth / imgRef.current.width;
     const scaleY = imgRef.current.naturalHeight / imgRef.current.height;
     
-    canvas.width = crop.width * scaleX;
-    canvas.height = crop.height * scaleY;
+    canvas.width = Math.floor(crop.width * scaleX);
+    canvas.height = Math.floor(crop.height * scaleY);
 
     const ctx = canvas.getContext('2d');
     if (!ctx) {
@@ -60,8 +65,8 @@ export function ImageCropperModal({ src, onClose, onComplete }: ImageCropperModa
       crop.height * scaleY,
       0,
       0,
-      crop.width * scaleX,
-      crop.height * scaleY
+      canvas.width,
+      canvas.height
     );
 
     onComplete(canvas.toDataURL('image/png'));
@@ -78,9 +83,10 @@ export function ImageCropperModal({ src, onClose, onComplete }: ImageCropperModa
             <ReactCrop
               crop={crop}
               onChange={(_, percentCrop) => setCrop(percentCrop)}
-              aspect={1}
+              aspect={ASPECT_RATIO}
+              minWidth={MIN_DIMENSION}
             >
-              <img ref={imgRef} src={src} onLoad={onImageLoad} alt="Crop preview" />
+              <img ref={imgRef} src={src} onLoad={onImageLoad} alt="Crop preview" style={{ maxHeight: "70vh" }}/>
             </ReactCrop>
           )}
         </div>

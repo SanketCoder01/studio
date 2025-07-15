@@ -34,9 +34,9 @@ type InternshipFormProps = {
   initialData?: Internship;
 };
 
-const defaultValues = { 
-    company: '', 
-    role: '', 
+const defaultValues = {
+    company: '',
+    role: '',
     startDate: '',
     endDate: '',
     location: '',
@@ -66,6 +66,8 @@ export function InternshipForm({ isOpen, onOpenChange, onSubmit, initialData }: 
       onSubmit(values);
     }
   };
+
+  const uploadKeySuffix = initialData?.id || 'new';
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -102,7 +104,7 @@ export function InternshipForm({ isOpen, onOpenChange, onSubmit, initialData }: 
                 <FormItem>
                   <FormLabel>Image Gallery</FormLabel>
                   <FormControl>
-                    <MultiImageUpload key={(initialData?.id || 'new') + '-gallery'} value={value} onChange={onChange} />
+                    <MultiImageUpload uploadKeyPrefix={`internship-gallery-${uploadKeySuffix}`} value={value} onChange={onChange} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -111,7 +113,7 @@ export function InternshipForm({ isOpen, onOpenChange, onSubmit, initialData }: 
                 <FormItem>
                   <FormLabel>Internship Report (Optional, PDF/DOCX)</FormLabel>
                   <FormControl>
-                    <FileUpload key={(initialData?.id || 'new') + '-report'} value={value || ''} onChange={onChange} />
+                    <FileUpload uploadKey={`internship-report-${uploadKeySuffix}`} value={value || ''} onChange={onChange} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -120,7 +122,7 @@ export function InternshipForm({ isOpen, onOpenChange, onSubmit, initialData }: 
                 <FormItem>
                   <FormLabel>Internship Certificate (Optional)</FormLabel>
                   <FormControl>
-                    <FileUpload key={(initialData?.id || 'new') + '-cert'} value={value || ''} onChange={onChange} />
+                    <FileUpload uploadKey={`internship-cert-${uploadKeySuffix}`} value={value || ''} onChange={onChange} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

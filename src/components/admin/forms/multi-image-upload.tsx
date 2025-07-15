@@ -14,12 +14,12 @@ type MultiImageUploadProps = {
   onChange: (urls: string[]) => void;
 };
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const IMAGE_FILE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 export function MultiImageUpload({ value, onChange }: MultiImageUploadProps) {
-  const [isConverting, setIsConverting] = useState(false);
   const { toast } = useToast();
+  const [isUploading, setIsUploading] = useState(false);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -34,20 +34,20 @@ export function MultiImageUpload({ value, onChange }: MultiImageUploadProps) {
       return;
     }
 
+    setIsUploading(true);
     const reader = new FileReader();
-    reader.onloadstart = () => setIsConverting(true);
     reader.onload = () => {
-      const dataUri = reader.result as string;
-       onChange([...value, dataUri]);
-       toast({ title: "Image Added!", description: "The image has been added to the gallery." });
-       setIsConverting(false);
+        const dataUri = reader.result as string;
+        onChange([...value, dataUri]);
+        setIsUploading(false);
+        toast({ title: 'Image Added!', description: 'The image has been added to the gallery.' });
     };
-    reader.onerror = (error) => {
-      console.error("Error converting file to Data URI:", error);
-      toast({ variant: "destructive", title: "Conversion Failed", description: "Could not process the file." });
-      setIsConverting(false);
+    reader.onerror = () => {
+        setIsUploading(false);
+        toast({ variant: 'destructive', title: 'Upload Failed', description: 'Failed to read the file.' });
     };
     reader.readAsDataURL(file);
+
     // Reset the input so the same file can be re-uploaded
     event.target.value = '';
   };
@@ -77,11 +77,11 @@ export function MultiImageUpload({ value, onChange }: MultiImageUploadProps) {
       <label
         className={cn(
           'relative flex flex-col items-center justify-center w-full h-24 border-2 border-dashed rounded-lg cursor-pointer bg-muted/50 hover:bg-muted/80 transition-colors',
-          isConverting && 'cursor-wait opacity-70'
+          isUploading && 'cursor-wait opacity-70'
         )}
       >
         <div className="flex flex-col items-center justify-center">
-          {isConverting ? (
+          {isUploading ? (
             <>
               <Loader2 className="w-8 h-8 text-muted-foreground animate-spin" />
               <p className="text-sm text-muted-foreground">Processing...</p>
@@ -98,7 +98,7 @@ export function MultiImageUpload({ value, onChange }: MultiImageUploadProps) {
           accept={IMAGE_FILE_TYPES.join(',')}
           className="absolute inset-0 w-full h-full opacity-0"
           onChange={handleFileChange}
-          disabled={isConverting}
+          disabled={isUploading}
         />
       </label>
     </div>
