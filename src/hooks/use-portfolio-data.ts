@@ -124,9 +124,11 @@ export const usePortfolioData = () => {
 
   useEffect(() => {
     // Initialize DB and fetch data on mount if needed
-    const db = initializeDb();
-    if (db && !hasFetched && !isFetching) {
-      fetchPortfolioData();
+    if (typeof window !== 'undefined') {
+        const db = initializeDb();
+        if (db && !hasFetched && !isFetching) {
+          fetchPortfolioData();
+        }
     }
     
     const listener = () => {
@@ -150,7 +152,12 @@ export const usePortfolioData = () => {
         const itemWithId = { ...newItem, id: docRef.id } as T;
         if (memoryState) {
           const currentItems = (memoryState[collectionName as keyof PortfolioData] || []) as T[];
-          const newItems = [itemWithId, ...currentItems]; // Add to the top
+          let newItems;
+           if (collectionName === 'contacts') {
+             newItems = [itemWithId, ...currentItems]; // Add new contacts to the top
+           } else {
+             newItems = [...currentItems, itemWithId]; // Add other items to the bottom
+           }
           setData({ ...memoryState, [collectionName]: newItems });
         }
         return itemWithId;
@@ -207,7 +214,9 @@ export const usePortfolioData = () => {
       await setDoc(doc(db, "portfolio", "profile"), newProfile);
     } catch (error) {
       console.error("Failed to update profile:", error);
-      setData({ ...memoryState, profile: oldProfile }); // Revert
+      if (memoryState) {
+        setData({ ...memoryState, profile: oldProfile }); // Revert
+      }
     }
   }, []);
 
@@ -222,4 +231,3 @@ export const usePortfolioData = () => {
     contacts: crudFunction<Contact>('contacts'),
   };
 };
-

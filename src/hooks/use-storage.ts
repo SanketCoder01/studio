@@ -52,7 +52,7 @@ export const useStorage = () => {
               toast({ variant: 'destructive', title: 'Permission Denied', description: 'Check your Firebase Storage security rules.' });
               break;
             case 'storage/canceled':
-              toast({ variant: 'destructive', title: 'Upload Canceled', description: 'The upload was canceled.' });
+              // Don't show a toast on cancel, it's usually intentional.
               break;
             default:
               toast({ variant: "destructive", title: "Upload Failed", description: "An unknown error occurred during upload." });
