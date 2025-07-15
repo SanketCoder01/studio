@@ -7,7 +7,6 @@ import { ref, uploadBytesResumable, getDownloadURL, getStorage } from 'firebase/
 import { useToast } from './use-toast';
 
 type UploadCallbacks = {
-  onUploading: (isUploading: boolean) => void;
   onProgress: (progress: number) => void;
 };
 
@@ -25,16 +24,13 @@ export const useStorage = () => {
          const error = 'Firebase is not initialized.';
          console.error(error);
          toast({ variant: "destructive", title: "Upload Failed", description: error });
-         return reject(error);
+         return reject(new Error(error));
       }
       const storage = getStorage();
       
       if (!file) {
-        return reject('No file provided.');
+        return reject(new Error('No file provided.'));
       }
-
-      callbacks.onUploading(true);
-      callbacks.onProgress(0);
 
       const storageRef = ref(storage, `${folder}/${Date.now()}-${file.name}`);
       const uploadTask = uploadBytesResumable(storageRef, file);
@@ -47,7 +43,6 @@ export const useStorage = () => {
         },
         (error) => {
           console.error("Upload failed:", error);
-          callbacks.onUploading(false);
           toast({
             variant: "destructive",
             title: "Upload Failed",
@@ -58,7 +53,6 @@ export const useStorage = () => {
         async () => {
           try {
             const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-            callbacks.onUploading(false);
             toast({
               title: "Upload Successful",
               description: "Your file has been uploaded.",
@@ -66,7 +60,6 @@ export const useStorage = () => {
             resolve(downloadURL);
           } catch (error) {
             console.error("Failed to get download URL:", error);
-            callbacks.onUploading(false);
              toast({
               variant: "destructive",
               title: "Upload Failed",

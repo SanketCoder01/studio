@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { useStorage } from '@/hooks/use-storage';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -24,16 +24,17 @@ export function FileUpload({ value, onChange, folder }: FileUploadProps) {
   const { uploadFile } = useStorage();
   const { toast } = useToast();
 
-  const handleFileChange = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     setError(null);
     const file = event.target.files?.[0];
     if (file) {
+      setIsUploading(true);
+      setProgress(0);
       try {
         const downloadURL = await uploadFile(file, folder, {
-          onUploading: setIsUploading,
           onProgress: setProgress,
         });
-        onChange(downloadURL); 
+        onChange(downloadURL);
       } catch (err) {
         setError('File upload failed. Please try again.');
         toast({
@@ -42,9 +43,12 @@ export function FileUpload({ value, onChange, folder }: FileUploadProps) {
           description: "There was an error during the upload process.",
         });
         console.error(err);
+      } finally {
+        setIsUploading(false);
+        setProgress(0);
       }
     }
-  }, [folder, onChange, toast, uploadFile]);
+  };
 
   const handleRemove = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -82,7 +86,7 @@ export function FileUpload({ value, onChange, folder }: FileUploadProps) {
       <label
         className={cn(
           'relative flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-muted/50 hover:bg-muted/80 transition-colors',
-          isUploading && 'cursor-wait'
+          isUploading && 'cursor-wait opacity-50'
         )}
       >
         <div className="flex flex-col items-center justify-center pt-5 pb-6">
