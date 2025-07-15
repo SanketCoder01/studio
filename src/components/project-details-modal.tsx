@@ -27,7 +27,7 @@ export function ProjectDetailsModal({ project, isOpen, onOpenChange }: ProjectDe
               fill
               className="object-cover"
               data-ai-hint="abstract technology"
-              unoptimized={project.imageUrl.startsWith('data:')}
+              unoptimized
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
             <div className="absolute bottom-4 left-6">

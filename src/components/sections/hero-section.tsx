@@ -61,7 +61,7 @@ export function HeroSection({ profile }: HeroSectionProps) {
                 className="relative rounded-full object-cover border-4 border-background/50 shadow-2xl group-hover:scale-105 transition-transform duration-300"
                 priority
                 data-ai-hint="profile picture"
-                unoptimized={profile.avatar.startsWith('data:')}
+                unoptimized
               />
             </div>
           </div>

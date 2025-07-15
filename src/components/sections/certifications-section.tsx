@@ -42,7 +42,7 @@ export function CertificationsSection({ certifications }: CertificationsSectionP
                     fill
                     className="object-contain transition-transform duration-300 group-hover:scale-105"
                     data-ai-hint="certificate document"
-                    unoptimized={cert.imageUrl.startsWith('data:')}
+                    unoptimized
                   />
                   <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300">
                     <Expand className="h-10 w-10 text-white" />

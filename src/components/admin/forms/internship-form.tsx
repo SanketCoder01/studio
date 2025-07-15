@@ -102,7 +102,7 @@ export function InternshipForm({ isOpen, onOpenChange, onSubmit, initialData }: 
                 <FormItem>
                   <FormLabel>Image Gallery</FormLabel>
                   <FormControl>
-                    <MultiImageUpload key={(initialData?.id || 'new') + '-gallery'} value={value} onChange={onChange} folder="internships/gallery" />
+                    <MultiImageUpload key={(initialData?.id || 'new') + '-gallery'} value={value} onChange={onChange} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -111,7 +111,7 @@ export function InternshipForm({ isOpen, onOpenChange, onSubmit, initialData }: 
                 <FormItem>
                   <FormLabel>Internship Report (Optional, PDF/DOCX)</FormLabel>
                   <FormControl>
-                    <FileUpload key={(initialData?.id || 'new') + '-report'} value={value || ''} onChange={onChange} folder="internships/reports" />
+                    <FileUpload key={(initialData?.id || 'new') + '-report'} value={value || ''} onChange={onChange} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -120,7 +120,7 @@ export function InternshipForm({ isOpen, onOpenChange, onSubmit, initialData }: 
                 <FormItem>
                   <FormLabel>Internship Certificate (Optional)</FormLabel>
                   <FormControl>
-                    <FileUpload key={(initialData?.id || 'new') + '-cert'} value={value || ''} onChange={onChange} folder="internships/certs" />
+                    <FileUpload key={(initialData?.id || 'new') + '-cert'} value={value || ''} onChange={onChange} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

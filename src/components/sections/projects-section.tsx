@@ -44,7 +44,7 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-110"
                     data-ai-hint="abstract technology"
-                    unoptimized={project.imageUrl.startsWith('data:')}
+                    unoptimized
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                 </div>

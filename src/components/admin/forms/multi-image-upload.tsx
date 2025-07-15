@@ -4,24 +4,21 @@
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { UploadCloud, X, Loader2, Image as ImageIcon } from 'lucide-react';
+import { UploadCloud, X, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
-import { ImageCropperModal } from './image-cropper-modal';
 import Image from 'next/image';
 
 type MultiImageUploadProps = {
   value: string[];
   onChange: (urls: string[]) => void;
-  folder: string;
 };
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const IMAGE_FILE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
-export function MultiImageUpload({ value, onChange, folder }: MultiImageUploadProps) {
+export function MultiImageUpload({ value, onChange }: MultiImageUploadProps) {
   const [isConverting, setIsConverting] = useState(false);
-  const [cropperSrc, setCropperSrc] = useState<string | null>(null);
   const { toast } = useToast();
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,7 +26,7 @@ export function MultiImageUpload({ value, onChange, folder }: MultiImageUploadPr
     if (!file) return;
 
     if (file.size > MAX_FILE_SIZE) {
-      toast({ variant: "destructive", title: "File too large", description: "Please upload a file smaller than 5MB." });
+      toast({ variant: "destructive", title: "File too large", description: "Please upload files smaller than 5MB." });
       return;
     }
     if (!IMAGE_FILE_TYPES.includes(file.type)) {
@@ -41,8 +38,9 @@ export function MultiImageUpload({ value, onChange, folder }: MultiImageUploadPr
     reader.onloadstart = () => setIsConverting(true);
     reader.onload = () => {
       const dataUri = reader.result as string;
-      setCropperSrc(dataUri);
-      setIsConverting(false);
+       onChange([...value, dataUri]);
+       toast({ title: "Image Added!", description: "The image has been added to the gallery." });
+       setIsConverting(false);
     };
     reader.onerror = (error) => {
       console.error("Error converting file to Data URI:", error);
@@ -54,23 +52,12 @@ export function MultiImageUpload({ value, onChange, folder }: MultiImageUploadPr
     event.target.value = '';
   };
 
-  const handleCropComplete = (croppedDataUri: string) => {
-    onChange([...value, croppedDataUri]);
-    setCropperSrc(null);
-    toast({ title: "Image Added!", description: "The image has been added to the gallery." });
-  };
-
   const handleRemove = (index: number) => {
     onChange(value.filter((_, i) => i !== index));
   };
 
   return (
     <div>
-      <ImageCropperModal 
-        src={cropperSrc}
-        onClose={() => setCropperSrc(null)}
-        onComplete={handleCropComplete}
-      />
       <div className="mb-2 grid grid-cols-3 gap-2">
         {value.map((url, index) => (
           <div key={index} className="relative group">
@@ -117,4 +104,3 @@ export function MultiImageUpload({ value, onChange, folder }: MultiImageUploadPr
     </div>
   );
 }
-
