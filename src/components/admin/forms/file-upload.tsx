@@ -2,7 +2,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useStorage } from '@/hooks/use-storage';
+import { uploadFileToFirebase } from '@/lib/firebase';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -27,13 +27,11 @@ export function FileUpload({ value, onChange, folder }: FileUploadProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   
-  const { uploadFile } = useStorage();
   const { toast } = useToast();
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      // File validation
       if (file.size > MAX_FILE_SIZE) {
         toast({ variant: "destructive", title: "File too large", description: "Please upload a file smaller than 10MB." });
         return;
@@ -43,17 +41,18 @@ export function FileUpload({ value, onChange, folder }: FileUploadProps) {
         return;
       }
 
+      setIsUploading(true);
+      setProgress(0);
       try {
-        const downloadURL = await uploadFile(file, folder, {
-          onProgress: setProgress,
-          onUploading: setIsUploading
-        });
+        const downloadURL = await uploadFileToFirebase(file, folder, setProgress);
         onChange(downloadURL);
+        toast({ title: "Upload Successful", description: "Your file has been uploaded." });
       } catch (err) {
-        // Error toast is handled inside useStorage hook
+         toast({ variant: "destructive", title: "Upload Failed", description: "An error occurred during upload." });
         console.error("Upload process failed", err);
       } finally {
-        setProgress(0); // Reset progress after success or failure
+        setIsUploading(false);
+        setProgress(0);
       }
     }
   };
