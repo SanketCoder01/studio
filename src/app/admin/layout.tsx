@@ -20,6 +20,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { LogoutButton } from '@/components/auth/logout-button';
 import { useAuth } from '@/hooks/use-auth';
+import { usePortfolioData } from '@/hooks/use-portfolio-data';
 
 export default function AdminLayout({
   children,
@@ -27,6 +28,7 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const { isAuthenticated, isAuthChecked } = useAuth();
+  const { data: portfolioData, loading: portfolioLoading } = usePortfolioData();
   const router = useRouter();
 
   useEffect(() => {
@@ -36,8 +38,9 @@ export default function AdminLayout({
     }
   }, [isAuthChecked, isAuthenticated, router]);
   
-  // While checking auth status, show a loading spinner
-  if (!isAuthChecked) {
+  const isLoading = !isAuthChecked || portfolioLoading;
+
+  if (isLoading) {
     return (
         <div className="flex h-screen w-full items-center justify-center bg-background">
             <div className="h-16 w-16 animate-spin rounded-full border-8 border-primary border-t-transparent" />
@@ -51,6 +54,10 @@ export default function AdminLayout({
     return null;
   }
 
+  const profileName = portfolioData?.profile?.name || 'Admin';
+  const avatarUrl = portfolioData?.profile?.avatar;
+  const fallback = profileName.split(' ').map(n => n[0]).join('').substring(0, 2);
+
   // If authenticated, render the layout and children
   return (
     <SidebarProvider>
@@ -58,11 +65,11 @@ export default function AdminLayout({
         <SidebarHeader>
           <div className="flex items-center gap-3">
              <Avatar>
-              <AvatarImage src="https://placehold.co/100x100.png" alt="Sanket Gaikwad" data-ai-hint="profile picture"/>
-              <AvatarFallback>SG</AvatarFallback>
+              <AvatarImage src={avatarUrl} alt={profileName} data-ai-hint="profile picture"/>
+              <AvatarFallback>{fallback}</AvatarFallback>
             </Avatar>
             <div className="flex flex-col">
-              <span className="font-semibold">Sanket Gaikwad</span>
+              <span className="font-semibold">{profileName}</span>
               <span className="text-xs text-muted-foreground">Admin</span>
             </div>
           </div>

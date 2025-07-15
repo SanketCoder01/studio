@@ -143,7 +143,7 @@ export const usePortfolioData = () => {
     };
   }, []);
 
-  const crudFunction = <T extends { id?: string }>(collectionName: string) => {
+  const crudFunction = useCallback(<T extends { id?: string }>(collectionName: string) => {
     const db: Firestore | undefined = initializeDb();
     
     const addItem = async (newItem: Omit<T, 'id'>) => {
@@ -203,7 +203,7 @@ export const usePortfolioData = () => {
     };
 
     return { addItem, updateItem, deleteItem };
-  };
+  }, []);
 
   const updateProfile = useCallback(async (newProfile: Profile) => {
     const db = initializeDb();
