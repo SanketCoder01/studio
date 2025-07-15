@@ -65,7 +65,7 @@ export default function AdminLayout({
         <SidebarHeader>
           <div className="flex items-center gap-3">
              <Avatar>
-              <AvatarImage src={avatarUrl} alt={profileName} data-ai-hint="profile picture" unoptimized/>
+              <AvatarImage src={avatarUrl || ''} alt={profileName} data-ai-hint="profile picture" unoptimized={true}/>
               <AvatarFallback>{fallback}</AvatarFallback>
             </Avatar>
             <div className="flex flex-col">
