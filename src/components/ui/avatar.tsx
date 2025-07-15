@@ -27,24 +27,11 @@ const AvatarImage = React.forwardRef<
     src: string;
     unoptimized?: boolean;
   }
->(({ className, src, alt, unoptimized, ...props }, ref) => {
-  if (!src) {
-    return (
-      <AvatarPrimitive.Image
-        ref={ref}
-        className={cn("aspect-square h-full w-full", className)}
-        alt={alt}
-        {...props}
-      />
-    );
-  }
-
-  return (
-    <AvatarPrimitive.Image asChild ref={ref} className={cn("aspect-square h-full w-full", className)} {...props}>
+>(({ className, src, alt, unoptimized = false, ...props }, ref) => (
+  <AvatarPrimitive.Image asChild ref={ref} className={cn("aspect-square h-full w-full", className)} {...props}>
       <Image src={src} alt={alt || ""} fill className="object-cover" unoptimized={unoptimized} />
-    </AvatarPrimitive.Image>
-  );
-});
+  </AvatarPrimitive.Image>
+));
 AvatarImage.displayName = AvatarPrimitive.Image.displayName
 
 const AvatarFallback = React.forwardRef<
