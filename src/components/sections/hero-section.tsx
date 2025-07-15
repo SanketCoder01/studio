@@ -2,6 +2,7 @@ import type { Profile } from '@/lib/types';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Download, Github, Linkedin, Send } from 'lucide-react';
+import Link from 'next/link';
 
 type HeroSectionProps = {
   profile: Profile;
@@ -31,9 +32,9 @@ export function HeroSection({ profile }: HeroSectionProps) {
                 </a>
               </Button>
               <Button size="lg" variant="secondary" asChild>
-                <a href="#contact">
+                <Link href="#contact">
                   Contact Me <Send className="ml-2" />
-                </a>
+                </Link>
               </Button>
             </div>
              <div className="mt-8 flex justify-center gap-2 md:justify-start">

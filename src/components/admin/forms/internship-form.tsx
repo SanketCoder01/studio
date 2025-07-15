@@ -30,30 +30,26 @@ type InternshipFormProps = {
   initialData?: Internship;
 };
 
+const defaultValues = { 
+    company: '', 
+    role: '', 
+    startDate: '',
+    endDate: '',
+    location: '',
+    description: '', 
+    certificateUrl: '' 
+};
+
 export function InternshipForm({ isOpen, onOpenChange, onSubmit, initialData }: InternshipFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: initialData || { 
-      company: '', 
-      role: '', 
-      startDate: '',
-      endDate: '',
-      location: '',
-      description: '', 
-      certificateUrl: '' 
-    },
+    defaultValues: initialData || defaultValues,
   });
 
    useEffect(() => {
-    form.reset(initialData || { 
-      company: '', 
-      role: '', 
-      startDate: '',
-      endDate: '',
-      location: '',
-      description: '', 
-      certificateUrl: '' 
-    });
+     if (isOpen) {
+        form.reset(initialData || defaultValues);
+     }
   }, [initialData, form, isOpen]);
 
   const handleSubmit = (values: z.infer<typeof formSchema>) => {

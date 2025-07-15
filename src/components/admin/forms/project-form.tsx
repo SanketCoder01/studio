@@ -31,6 +31,17 @@ type ProjectFormProps = {
   initialData?: Project;
 };
 
+const defaultValues = {
+    title: '',
+    description: '',
+    imageUrl: '',
+    link: '',
+    introduction: '',
+    technologies: '',
+    features: '',
+    reportUrl: '',
+};
+
 export function ProjectForm({ isOpen, onOpenChange, onSubmit, initialData }: ProjectFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -38,33 +49,17 @@ export function ProjectForm({ isOpen, onOpenChange, onSubmit, initialData }: Pro
         ...initialData,
         technologies: initialData.technologies.join(', '),
         features: initialData.features.join(', '),
-    } : {
-        title: '',
-        description: '',
-        imageUrl: '',
-        link: '',
-        introduction: '',
-        technologies: '',
-        features: '',
-        reportUrl: '',
-    },
+    } : defaultValues,
   });
 
   useEffect(() => {
-    form.reset(initialData ? {
-        ...initialData,
-        technologies: initialData.technologies.join(', '),
-        features: initialData.features.join(', '),
-    } : {
-        title: '',
-        description: '',
-        imageUrl: '',
-        link: '',
-        introduction: '',
-        technologies: '',
-        features: '',
-        reportUrl: '',
-    });
+    if (isOpen) {
+        form.reset(initialData ? {
+            ...initialData,
+            technologies: initialData.technologies.join(', '),
+            features: initialData.features.join(', '),
+        } : defaultValues);
+    }
   }, [initialData, form, isOpen]);
 
   const handleSubmit = (values: z.infer<typeof formSchema>) => {

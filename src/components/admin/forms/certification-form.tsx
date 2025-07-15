@@ -26,14 +26,18 @@ type CertificationFormProps = {
   initialData?: Certification;
 };
 
+const defaultValues = { name: '', issuer: '', date: '', imageUrl: '' };
+
 export function CertificationForm({ isOpen, onOpenChange, onSubmit, initialData }: CertificationFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: initialData || { name: '', issuer: '', date: '', imageUrl: '' },
+    defaultValues: initialData || defaultValues,
   });
 
   useEffect(() => {
-    form.reset(initialData || { name: '', issuer: '', date: '', imageUrl: '' });
+    if (isOpen) {
+      form.reset(initialData || defaultValues);
+    }
   }, [initialData, form, isOpen]);
 
   const handleSubmit = (values: z.infer<typeof formSchema>) => {

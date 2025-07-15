@@ -13,22 +13,17 @@ export const useStorage = () => {
 
   const uploadFile = useCallback((file: File, folder: string = 'uploads'): Promise<string> => {
     return new Promise((resolve, reject) => {
-      const storage = getStorage();
-      if (!storage) {
-        const error = 'Firebase Storage is not initialized.';
-        console.error(error);
-        toast({
-          variant: "destructive",
-          title: "Upload Failed",
-          description: error,
-        });
-        reject(error);
-        return;
+      const db = initializeDb();
+      if (!db) {
+         const error = 'Firebase is not initialized.';
+         console.error(error);
+         toast({ variant: "destructive", title: "Upload Failed", description: error });
+         return reject(error);
       }
+      const storage = getStorage();
       
       if (!file) {
-        reject('No file provided.');
-        return;
+        return reject('No file provided.');
       }
 
       setIsUploading(true);

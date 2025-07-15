@@ -101,4 +101,19 @@
   .gradient-text {
     @apply bg-clip-text text-transparent;
   }
+  
+  .shimmer {
+    @apply bg-gradient-to-r from-transparent via-primary/10 to-transparent;
+    animation: shimmer 2s infinite;
+    background-size: 200% 100%;
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
 }
