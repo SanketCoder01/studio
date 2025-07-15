@@ -57,7 +57,7 @@ export function InternshipDetailsModal({ internship, isOpen, onOpenChange }: Int
                             {internship.images.map((image, index) => (
                                 <CarouselItem key={index}>
                                     <div className="relative h-64 w-full rounded-lg overflow-hidden">
-                                    <Image src={image} alt={`Internship memory ${index + 1}`} layout="fill" objectFit="cover" data-ai-hint="teamwork office" unoptimized />
+                                    <Image src={image} alt={`Internship memory ${index + 1}`} layout="fill" objectFit="contain" data-ai-hint="teamwork office" unoptimized />
                                     </div>
                                 </CarouselItem>
                             ))}
