@@ -6,7 +6,7 @@ import { useStorage } from '@/hooks/use-storage';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { UploadCloud, File as FileIcon, X } from 'lucide-react';
+import { UploadCloud, File as FileIcon, X, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 
@@ -94,15 +94,26 @@ export function FileUpload({ value, onChange, folder }: FileUploadProps) {
       <label
         className={cn(
           'relative flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-muted/50 hover:bg-muted/80 transition-colors',
-          isUploading && 'cursor-wait opacity-50'
+          isUploading && 'cursor-wait opacity-70'
         )}
       >
         <div className="flex flex-col items-center justify-center pt-5 pb-6">
-          <UploadCloud className="w-10 h-10 mb-3 text-muted-foreground" />
-          <p className="mb-2 text-sm text-muted-foreground">
-            <span className="font-semibold">Click to upload</span> or drag and drop
-          </p>
-          <p className="text-xs text-muted-foreground">Image, PDF, DOCX (MAX. 10MB)</p>
+          {isUploading ? (
+            <>
+              <Loader2 className="w-10 h-10 mb-3 text-muted-foreground animate-spin" />
+              <p className="mb-2 text-sm text-muted-foreground">
+                <span className="font-semibold">Uploading: {Math.round(progress)}%</span>
+              </p>
+            </>
+          ) : (
+            <>
+              <UploadCloud className="w-10 h-10 mb-3 text-muted-foreground" />
+              <p className="mb-2 text-sm text-muted-foreground">
+                <span className="font-semibold">Click to upload</span> or drag and drop
+              </p>
+              <p className="text-xs text-muted-foreground">Image, PDF, DOCX (MAX. 10MB)</p>
+            </>
+          )}
         </div>
         <Input
           type="file"
@@ -115,7 +126,6 @@ export function FileUpload({ value, onChange, folder }: FileUploadProps) {
       {isUploading && (
         <div className="w-full mt-2">
           <Progress value={progress} className="h-2" />
-          <p className="text-xs text-center text-muted-foreground">{Math.round(progress)}%</p>
         </div>
       )}
     </div>
