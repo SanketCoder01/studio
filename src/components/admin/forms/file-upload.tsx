@@ -26,7 +26,7 @@ const OTHER_FILE_TYPES = [
 const ALLOWED_FILE_TYPES = [...IMAGE_FILE_TYPES, ...OTHER_FILE_TYPES];
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
-export function FileUpload({ value, onChange }: FileUploadProps) {
+export function FileUpload({ value, onChange, uploadKey }: FileUploadProps) {
   const { toast } = useToast();
   const [status, setStatus] = useState<UploadStatus>('idle');
   const [progress, setProgress] = useState(0);
@@ -135,7 +135,7 @@ export function FileUpload({ value, onChange }: FileUploadProps) {
   }
 
   return (
-    <div>
+    <div key={uploadKey}>
       <ImageCropperModal
         src={cropperSrc}
         onClose={handleCropClose}
@@ -177,4 +177,3 @@ export function FileUpload({ value, onChange }: FileUploadProps) {
     </div>
   );
 }
-

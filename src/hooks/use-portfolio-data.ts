@@ -1,26 +1,11 @@
 
 'use client';
 import { useState, useEffect, useCallback } from 'react';
-import { initializeDb } from '@/lib/firebase';
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  setDoc,
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  writeBatch,
-  orderBy,
-  query,
-  Firestore
-} from 'firebase/firestore';
 import type { PortfolioData, Profile, Education, Internship, Project, Certification, Contact } from '@/lib/types';
 import { portfolioData as initialData } from '@/lib/data';
 
 // This is our in-memory "database"
-let memoryState: PortfolioData | null = null;
+let memoryState: PortfolioData | null = initialData;
 let hasFetched = false;
 let isFetching = false;
 
@@ -41,81 +26,22 @@ const setData = (newData: PortfolioData | null, fromServer = false) => {
 };
 
 async function seedData() {
-  const db = initializeDb();
-  if (!db) return;
-  console.log("Seeding data to Firestore...");
-  const batch = writeBatch(db);
-
-  // Seed profile
-  const profileRef = doc(db, "portfolio", "profile");
-  batch.set(profileRef, initialData.profile);
-
-  // Seed other collections
-  for (const key in initialData) {
-    if (key !== 'profile' && Array.isArray(initialData[key as keyof PortfolioData])) {
-      const collectionName = key;
-      const items = initialData[key as keyof PortfolioData] as any[];
-      items.forEach((item) => {
-        const docRef = doc(collection(db, collectionName));
-        batch.set(docRef, item);
-      });
-    }
-  }
-
-  await batch.commit();
+  console.log("Seeding data to in-memory state...");
+  setData(initialData, true);
   console.log("Data seeded successfully!");
-  // Refetch data after seeding
-  fetchPortfolioData(true);
 }
 
 async function fetchPortfolioData(force = false) {
     if (isFetching || (hasFetched && !force)) return;
     isFetching = true;
     broadcastChanges();
-
-    const db = initializeDb();
-    if (!db) {
-        console.error("Firestore is not initialized. Cannot fetch data.");
-        isFetching = false;
-        broadcastChanges();
-        return;
-    }
-
-    try {
-        console.log("Fetching data from Firestore...");
-        const profileDoc = await getDoc(doc(db, "portfolio", "profile"));
-        
-        if (!profileDoc.exists()) {
-             console.log("No profile found. Data might need to be seeded.");
-             setData(null, true);
-             return;
-        }
-
-        const collectionsToFetch = ['education', 'internships', 'projects', 'certifications', 'contacts'];
-        const collectionPromises = collectionsToFetch.map(c => {
-          if (c === 'contacts') {
-            return getDocs(query(collection(db, c), orderBy('received', 'desc')));
-          }
-          return getDocs(collection(db, c));
-        });
-        
-        const [educationSnapshot, internshipsSnapshot, projectsSnapshot, certificationsSnapshot, contactsSnapshot] = await Promise.all(collectionPromises);
-
-        const fetchedData: PortfolioData = {
-            profile: profileDoc.data() as Profile,
-            education: educationSnapshot.docs.map(d => ({...d.data(), id: d.id } as Education)),
-            internships: internshipsSnapshot.docs.map(d => ({...d.data(), id: d.id } as Internship)),
-            projects: projectsSnapshot.docs.map(d => ({...d.data(), id: d.id } as Project)),
-            certifications: certificationsSnapshot.docs.map(d => ({...d.data(), id: d.id } as Certification)),
-            contacts: contactsSnapshot.docs.map(d => ({...d.data(), id: d.id } as Contact)),
-        };
-
-        setData(fetchedData, true);
-        console.log("Data fetched successfully.");
-    } catch (error) {
-        console.error("Error fetching portfolio data:", error);
-        setData(null, true);
-    }
+    
+    // Simulate fetching
+    setTimeout(() => {
+        console.log("Using initial data for portfolio.");
+        setData(initialData, true);
+        console.log("Data loaded successfully.");
+    }, 500);
 }
 
 
@@ -123,12 +49,8 @@ export const usePortfolioData = () => {
   const [state, setState] = useState({ data: memoryState, loading: !hasFetched || isFetching });
 
   useEffect(() => {
-    // Initialize DB and fetch data on mount if needed
-    if (typeof window !== 'undefined') {
-        const db = initializeDb();
-        if (db && !hasFetched && !isFetching) {
-          fetchPortfolioData();
-        }
+    if (!hasFetched && !isFetching) {
+      fetchPortfolioData();
     }
     
     const listener = () => {
@@ -143,15 +65,12 @@ export const usePortfolioData = () => {
     };
   }, []);
 
-  const crudFunction = useCallback(<T extends { id?: string }>(collectionName: string) => {
-    const db: Firestore | undefined = initializeDb();
+  const crudFunction = useCallback(<T extends { id?: string }>(collectionName: keyof PortfolioData) => {
     
     const addItem = async (newItem: Omit<T, 'id'>) => {
-        if (!db) { throw new Error("Firestore not initialized"); }
-        const docRef = await addDoc(collection(db, collectionName), newItem);
-        const itemWithId = { ...newItem, id: docRef.id } as T;
+        const itemWithId = { ...newItem, id: new Date().toISOString() } as T; // Use timestamp for unique ID
         if (memoryState) {
-          const currentItems = (memoryState[collectionName as keyof PortfolioData] || []) as T[];
+          const currentItems = (memoryState[collectionName] || []) as T[];
           let newItems;
            if (collectionName === 'contacts') {
              newItems = [itemWithId, ...currentItems]; // Add new contacts to the top
@@ -164,41 +83,18 @@ export const usePortfolioData = () => {
     };
 
     const updateItem = async (updatedItem: T) => {
-      if (!db) { throw new Error("Firestore not initialized"); }
       if (!updatedItem.id) return;
-      const { id, ...itemData } = updatedItem;
-      const docRef = doc(db, collectionName, id);
-      
-      let oldItems: T[] = [];
       if(memoryState) {
-        oldItems = [...(memoryState[collectionName as keyof PortfolioData] || [])] as T[];
-        const newItems = oldItems.map(item => item.id === id ? updatedItem : item);
-        setData({ ...memoryState, [collectionName]: newItems }); // Optimistic update
-      }
-
-      try {
-        await updateDoc(docRef, itemData);
-      } catch (error) {
-         console.error(`Failed to update item in ${collectionName}:`, error);
-         if(memoryState) setData({ ...memoryState, [collectionName]: oldItems }); // Revert
+        const newItems = ((memoryState[collectionName] || []) as T[]).map(item => item.id === updatedItem.id ? updatedItem : item);
+        setData({ ...memoryState, [collectionName]: newItems });
       }
     };
 
     const deleteItem = async (id: string) => {
-       if (!db) { throw new Error("Firestore not initialized"); }
        if (!id) return;
-       let oldItems: T[] = [];
        if(memoryState) {
-         oldItems = [...(memoryState[collectionName as keyof PortfolioData] || [])] as T[];
-         const newItems = oldItems.filter(item => item.id !== id);
-         setData({ ...memoryState, [collectionName]: newItems }); // Optimistic update
-       }
-
-       try {
-         await deleteDoc(doc(db, collectionName, id));
-       } catch (error) {
-          console.error(`Failed to delete item from ${collectionName}:`, error);
-          if(memoryState) setData({ ...memoryState, [collectionName]: oldItems }); // Revert
+         const newItems = ((memoryState[collectionName] || []) as T[]).filter(item => item.id !== id);
+         setData({ ...memoryState, [collectionName]: newItems });
        }
     };
 
@@ -206,18 +102,8 @@ export const usePortfolioData = () => {
   }, []);
 
   const updateProfile = useCallback(async (newProfile: Profile) => {
-    const db = initializeDb();
-    if (!db || !memoryState) return;
-    const oldProfile = memoryState.profile;
-    setData({ ...memoryState, profile: newProfile }); // Optimistic update
-    try {
-      await setDoc(doc(db, "portfolio", "profile"), newProfile);
-    } catch (error) {
-      console.error("Failed to update profile:", error);
-      if (memoryState) {
-        setData({ ...memoryState, profile: oldProfile }); // Revert
-      }
-    }
+    if (!memoryState) return;
+    setData({ ...memoryState, profile: newProfile });
   }, []);
 
   return {

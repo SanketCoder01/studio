@@ -27,7 +27,7 @@ export function HeroSection({ profile }: HeroSectionProps) {
             </h2>
             <div className="mt-8 flex flex-wrap justify-center gap-4 md:justify-start">
               <Button size="lg" asChild>
-                <a href={profile.cvUrl} download="cv.pdf">
+                <a href={profile.cvUrl} download>
                   <Download className="mr-2" />
                   Download CV
                 </a>
