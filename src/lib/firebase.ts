@@ -2,7 +2,7 @@
 // Import the functions you need from the SDKs you need
 import { getApp, getApps, initializeApp, type FirebaseApp } from "firebase/app";
 import { getFirestore, type Firestore } from "firebase/firestore";
-import { getStorage, type FirebaseStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { getStorage, type FirebaseStorage } from "firebase/storage";
 
 // Your web app's Firebase configuration is read from environment variables
 const firebaseConfig = {
@@ -46,46 +46,6 @@ export function initializeDb() {
   storage = getStorage(app);
   return db;
 }
-
-
-export const uploadFileToFirebase = (
-    file: File, 
-    folder: string,
-    onProgress: (progress: number) => void
-  ): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const db = initializeDb();
-      if (!db || !storage) {
-         const error = 'Firebase is not initialized.';
-         console.error(error);
-         return reject(new Error(error));
-      }
-      
-      const storageRef = ref(storage, `${folder}/${Date.now()}-${file.name}`);
-      const uploadTask = uploadBytesResumable(storageRef, file);
-
-      uploadTask.on(
-        'state_changed',
-        (snapshot) => {
-          const currentProgress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          onProgress(currentProgress);
-        },
-        (error) => {
-          console.error("Upload failed:", error);
-          reject(error);
-        },
-        async () => {
-          try {
-            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-            resolve(downloadURL);
-          } catch (error) {
-            console.error("Failed to get download URL:", error);
-            reject(error);
-          }
-        }
-      );
-    });
-};
 
 
 // We export the uninitialized placeholders and the initializer function.

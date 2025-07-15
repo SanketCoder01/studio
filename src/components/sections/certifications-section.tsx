@@ -31,6 +31,7 @@ export function CertificationsSection({ certifications }: CertificationsSectionP
                   fill
                   className="object-contain transition-transform duration-300 group-hover:scale-105"
                   data-ai-hint="certificate document"
+                  unoptimized={cert.imageUrl.startsWith('data:')}
                 />
               </div>
               <div className="flex-grow">
