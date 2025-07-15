@@ -92,7 +92,7 @@ export function InternshipForm({ isOpen, onOpenChange, onSubmit, initialData }: 
                 <FormItem>
                   <FormLabel>Internship Certificate (Optional)</FormLabel>
                   <FormControl>
-                    <FileUpload key={(initialData?.id || 'new') + 'cert'} value={value || ''} onChange={onChange} folder="internships" />
+                    <FileUpload key={(initialData?.id || 'new') + '-cert'} value={value || ''} onChange={onChange} folder="internships" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

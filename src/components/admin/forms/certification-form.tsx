@@ -69,7 +69,7 @@ export function CertificationForm({ isOpen, onOpenChange, onSubmit, initialData 
                 <FormItem>
                   <FormLabel>Certificate Image</FormLabel>
                   <FormControl>
-                    <FileUpload key={initialData?.id || 'new'} value={value} onChange={onChange} folder="certifications" />
+                    <FileUpload key={(initialData?.id || 'new') + '-cert-image'} value={value} onChange={onChange} folder="certifications" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -92,7 +92,7 @@ export function ProjectForm({ isOpen, onOpenChange, onSubmit, initialData }: Pro
              <FormField control={form.control} name="imageUrl" render={({ field: { onChange, value } }) => (
                 <FormItem>
                     <FormLabel>Project Image</FormLabel>
-                    <FormControl><FileUpload key={(initialData?.id || 'new') + 'image'} value={value} onChange={onChange} folder="projects/images" /></FormControl>
+                    <FormControl><FileUpload key={(initialData?.id || 'new') + '-image'} value={value} onChange={onChange} folder="projects/images" /></FormControl>
                     <FormMessage />
                 </FormItem>
             )} />
@@ -121,7 +121,7 @@ export function ProjectForm({ isOpen, onOpenChange, onSubmit, initialData }: Pro
              <FormField control={form.control} name="reportUrl" render={({ field: { onChange, value } }) => (
                 <FormItem>
                     <FormLabel>Project Report (Optional)</FormLabel>
-                    <FormControl><FileUpload key={(initialData?.id || 'new') + 'report'} value={value || ''} onChange={onChange} folder="projects/reports" /></FormControl>
+                    <FormControl><FileUpload key={(initialData?.id || 'new') + '-report'} value={value || ''} onChange={onChange} folder="projects/reports" /></FormControl>
                     <FormMessage />
                 </FormItem>
             )} />
