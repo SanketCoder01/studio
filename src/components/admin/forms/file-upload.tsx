@@ -4,10 +4,10 @@
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
 import { UploadCloud, File as FileIcon, X, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { ImageCropperModal } from './image-cropper-modal';
 
 type FileUploadProps = {
   value: string;
@@ -16,15 +16,17 @@ type FileUploadProps = {
 };
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB - a reasonable limit for Data URIs
-const ALLOWED_FILE_TYPES = [
-  'image/jpeg', 'image/png', 'image/webp', 'image/gif',
+const IMAGE_FILE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+const OTHER_FILE_TYPES = [
   'application/pdf', 
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document' // DOCX
 ];
+const ALLOWED_FILE_TYPES = [...IMAGE_FILE_TYPES, ...OTHER_FILE_TYPES];
 
 
 export function FileUpload({ value, onChange, folder }: FileUploadProps) {
   const [isConverting, setIsConverting] = useState(false);
+  const [cropperSrc, setCropperSrc] = useState<string | null>(null);
   const { toast } = useToast();
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,13 +42,17 @@ export function FileUpload({ value, onChange, folder }: FileUploadProps) {
       return;
     }
 
-    setIsConverting(true);
     const reader = new FileReader();
     reader.onload = () => {
       const dataUri = reader.result as string;
-      onChange(dataUri);
-      setIsConverting(false);
-      toast({ title: "File Ready!", description: "The file has been prepared for saving." });
+      if (IMAGE_FILE_TYPES.includes(file.type)) {
+        setCropperSrc(dataUri);
+      } else {
+         setIsConverting(true);
+         onChange(dataUri);
+         setIsConverting(false);
+         toast({ title: "File Ready!", description: "The file has been prepared for saving." });
+      }
     };
     reader.onerror = (error) => {
       console.error("Error converting file to Data URI:", error);
@@ -54,6 +60,12 @@ export function FileUpload({ value, onChange, folder }: FileUploadProps) {
       setIsConverting(false);
     };
     reader.readAsDataURL(file);
+  };
+
+  const handleCropComplete = (croppedDataUri: string) => {
+    onChange(croppedDataUri);
+    setCropperSrc(null);
+    toast({ title: "Image Cropped!", description: "The image has been prepared for saving." });
   };
 
   const handleRemove = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -72,8 +84,9 @@ export function FileUpload({ value, onChange, folder }: FileUploadProps) {
           rel="noopener noreferrer"
           className="ml-2 text-sm text-primary hover:underline truncate"
         >
-         { value.startsWith('data:application/pdf') ? 'View PDF' : 
-            value.startsWith('data:application') ? 'View Document' : 'View Image'
+         { value.startsWith('data:image') ? 'View Image' : 
+            value.startsWith('data:application/pdf') ? 'View PDF' : 
+            'View Document'
           }
         </a>
         <Button
@@ -91,6 +104,11 @@ export function FileUpload({ value, onChange, folder }: FileUploadProps) {
 
   return (
     <div>
+      <ImageCropperModal 
+        src={cropperSrc}
+        onClose={() => setCropperSrc(null)}
+        onComplete={handleCropComplete}
+      />
       <label
         className={cn(
           'relative flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-muted/50 hover:bg-muted/80 transition-colors',
