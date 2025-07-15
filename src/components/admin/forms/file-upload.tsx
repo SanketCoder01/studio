@@ -16,36 +16,44 @@ type FileUploadProps = {
   folder: string;
 };
 
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const ALLOWED_FILE_TYPES = [
+  'image/jpeg', 'image/png', 'image/webp',
+  'application/pdf', 
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document' // DOCX
+];
+
 export function FileUpload({ value, onChange, folder }: FileUploadProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [error, setError] = useState<string | null>(null);
-
+  
   const { uploadFile } = useStorage();
   const { toast } = useToast();
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    setError(null);
     const file = event.target.files?.[0];
     if (file) {
-      setIsUploading(true);
-      setProgress(0);
+      // File validation
+      if (file.size > MAX_FILE_SIZE) {
+        toast({ variant: "destructive", title: "File too large", description: "Please upload a file smaller than 10MB." });
+        return;
+      }
+      if (!ALLOWED_FILE_TYPES.includes(file.type)) {
+        toast({ variant: "destructive", title: "Invalid file type", description: "Please upload a JPG, PNG, PDF, or DOCX file." });
+        return;
+      }
+
       try {
         const downloadURL = await uploadFile(file, folder, {
           onProgress: setProgress,
+          onUploading: setIsUploading
         });
         onChange(downloadURL);
       } catch (err) {
-        setError('File upload failed. Please try again.');
-        toast({
-          variant: "destructive",
-          title: "Upload Failed",
-          description: "There was an error during the upload process.",
-        });
-        console.error(err);
+        // Error toast is handled inside useStorage hook
+        console.error("Upload process failed", err);
       } finally {
-        setIsUploading(false);
-        setProgress(0);
+        setProgress(0); // Reset progress after success or failure
       }
     }
   };
@@ -94,11 +102,11 @@ export function FileUpload({ value, onChange, folder }: FileUploadProps) {
           <p className="mb-2 text-sm text-muted-foreground">
             <span className="font-semibold">Click to upload</span> or drag and drop
           </p>
-          <p className="text-xs text-muted-foreground">JPG, PNG, PDF, DOCX (MAX. 10MB)</p>
+          <p className="text-xs text-muted-foreground">Image, PDF, DOCX (MAX. 10MB)</p>
         </div>
         <Input
           type="file"
-          accept="image/jpeg,image/png,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+          accept={ALLOWED_FILE_TYPES.join(',')}
           className="absolute inset-0 w-full h-full opacity-0"
           onChange={handleFileChange}
           disabled={isUploading}
@@ -110,7 +118,6 @@ export function FileUpload({ value, onChange, folder }: FileUploadProps) {
           <p className="text-xs text-center text-muted-foreground">{Math.round(progress)}%</p>
         </div>
       )}
-      {error && <p className="mt-2 text-sm text-destructive">{error}</p>}
     </div>
   );
 }

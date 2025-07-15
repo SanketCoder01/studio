@@ -8,6 +8,7 @@ import { useToast } from './use-toast';
 
 type UploadCallbacks = {
   onProgress: (progress: number) => void;
+  onUploading: (uploading: boolean) => void;
 };
 
 export const useStorage = () => {
@@ -24,14 +25,17 @@ export const useStorage = () => {
          const error = 'Firebase is not initialized.';
          console.error(error);
          toast({ variant: "destructive", title: "Upload Failed", description: error });
+         callbacks.onUploading(false);
          return reject(new Error(error));
       }
       const storage = getStorage();
       
       if (!file) {
+        callbacks.onUploading(false);
         return reject(new Error('No file provided.'));
       }
 
+      callbacks.onUploading(true);
       const storageRef = ref(storage, `${folder}/${Date.now()}-${file.name}`);
       const uploadTask = uploadBytesResumable(storageRef, file);
 
@@ -43,28 +47,30 @@ export const useStorage = () => {
         },
         (error) => {
           console.error("Upload failed:", error);
-          toast({
-            variant: "destructive",
-            title: "Upload Failed",
-            description: "There was an error uploading your file. Please try again.",
-          });
+           switch (error.code) {
+            case 'storage/unauthorized':
+              toast({ variant: 'destructive', title: 'Permission Denied', description: 'Check your Firebase Storage security rules.' });
+              break;
+            case 'storage/canceled':
+              toast({ variant: 'destructive', title: 'Upload Canceled', description: 'The upload was canceled.' });
+              break;
+            default:
+              toast({ variant: "destructive", title: "Upload Failed", description: "An unknown error occurred during upload." });
+              break;
+          }
+          callbacks.onUploading(false);
           reject(error);
         },
         async () => {
           try {
             const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-            toast({
-              title: "Upload Successful",
-              description: "Your file has been uploaded.",
-            });
+            toast({ title: "Upload Successful", description: "Your file has been uploaded." });
+            callbacks.onUploading(false);
             resolve(downloadURL);
           } catch (error) {
             console.error("Failed to get download URL:", error);
-             toast({
-              variant: "destructive",
-              title: "Upload Failed",
-              description: "Could not get the file URL after upload.",
-            });
+             toast({ variant: "destructive", title: "Upload Failed", description: "Could not get the file URL after upload." });
+            callbacks.onUploading(false);
             reject(error);
           }
         }
