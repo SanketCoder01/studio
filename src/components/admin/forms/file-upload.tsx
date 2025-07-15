@@ -43,15 +43,18 @@ export function FileUpload({ value, onChange, folder }: FileUploadProps) {
     }
 
     const reader = new FileReader();
+    reader.onloadstart = () => {
+      setIsConverting(true);
+    };
     reader.onload = () => {
       const dataUri = reader.result as string;
       if (IMAGE_FILE_TYPES.includes(file.type)) {
         setCropperSrc(dataUri);
+        setIsConverting(false);
       } else {
-         setIsConverting(true);
          onChange(dataUri);
          setIsConverting(false);
-         toast({ title: "File Ready!", description: "The file has been prepared for saving." });
+         toast({ title: "File Ready!", description: "The document has been prepared for saving." });
       }
     };
     reader.onerror = (error) => {
