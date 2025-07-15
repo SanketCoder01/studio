@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -25,11 +26,10 @@ const AvatarImage = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Image>,
   Omit<React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image>, 'src'> & { 
     src: string;
-    unoptimized?: boolean;
   }
->(({ className, src, alt, unoptimized = false, ...props }, ref) => (
+>(({ className, src, alt, ...props }, ref) => (
   <AvatarPrimitive.Image asChild ref={ref} className={cn("aspect-square h-full w-full", className)} {...props}>
-      <Image src={src} alt={alt || ""} fill className="object-cover" unoptimized={unoptimized} />
+      <Image src={src} alt={alt || ""} fill className="object-cover" unoptimized />
   </AvatarPrimitive.Image>
 ));
 AvatarImage.displayName = AvatarPrimitive.Image.displayName
