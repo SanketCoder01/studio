@@ -1,17 +1,24 @@
 
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import { initializeDb } from '@/lib/firebase';
 import { ref, uploadBytesResumable, getDownloadURL, getStorage } from 'firebase/storage';
 import { useToast } from './use-toast';
 
+type UploadCallbacks = {
+  onUploading: (isUploading: boolean) => void;
+  onProgress: (progress: number) => void;
+};
+
 export const useStorage = () => {
-  const [isUploading, setIsUploading] = useState(false);
-  const [progress, setProgress] = useState(0);
   const { toast } = useToast();
 
-  const uploadFile = useCallback((file: File, folder: string = 'uploads'): Promise<string> => {
+  const uploadFile = useCallback((
+    file: File, 
+    folder: string,
+    callbacks: UploadCallbacks
+  ): Promise<string> => {
     return new Promise((resolve, reject) => {
       const db = initializeDb();
       if (!db) {
@@ -26,8 +33,8 @@ export const useStorage = () => {
         return reject('No file provided.');
       }
 
-      setIsUploading(true);
-      setProgress(0);
+      callbacks.onUploading(true);
+      callbacks.onProgress(0);
 
       const storageRef = ref(storage, `${folder}/${Date.now()}-${file.name}`);
       const uploadTask = uploadBytesResumable(storageRef, file);
@@ -36,11 +43,11 @@ export const useStorage = () => {
         'state_changed',
         (snapshot) => {
           const currentProgress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          setProgress(currentProgress);
+          callbacks.onProgress(currentProgress);
         },
         (error) => {
           console.error("Upload failed:", error);
-          setIsUploading(false);
+          callbacks.onUploading(false);
           toast({
             variant: "destructive",
             title: "Upload Failed",
@@ -51,7 +58,7 @@ export const useStorage = () => {
         async () => {
           try {
             const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-            setIsUploading(false);
+            callbacks.onUploading(false);
             toast({
               title: "Upload Successful",
               description: "Your file has been uploaded.",
@@ -59,7 +66,7 @@ export const useStorage = () => {
             resolve(downloadURL);
           } catch (error) {
             console.error("Failed to get download URL:", error);
-            setIsUploading(false);
+            callbacks.onUploading(false);
              toast({
               variant: "destructive",
               title: "Upload Failed",
@@ -72,5 +79,5 @@ export const useStorage = () => {
     });
   }, [toast]);
 
-  return { uploadFile, isUploading, progress };
+  return { uploadFile };
 };

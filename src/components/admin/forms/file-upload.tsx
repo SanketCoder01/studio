@@ -17,8 +17,11 @@ type FileUploadProps = {
 };
 
 export function FileUpload({ value, onChange, folder }: FileUploadProps) {
-  const { uploadFile, isUploading, progress } = useStorage();
+  const [isUploading, setIsUploading] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
+
+  const { uploadFile } = useStorage();
   const { toast } = useToast();
 
   const handleFileChange = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,7 +29,10 @@ export function FileUpload({ value, onChange, folder }: FileUploadProps) {
     const file = event.target.files?.[0];
     if (file) {
       try {
-        const downloadURL = await uploadFile(file, folder);
+        const downloadURL = await uploadFile(file, folder, {
+          onUploading: setIsUploading,
+          onProgress: setProgress,
+        });
         onChange(downloadURL); 
       } catch (err) {
         setError('File upload failed. Please try again.');
@@ -84,11 +90,11 @@ export function FileUpload({ value, onChange, folder }: FileUploadProps) {
           <p className="mb-2 text-sm text-muted-foreground">
             <span className="font-semibold">Click to upload</span> or drag and drop
           </p>
-          <p className="text-xs text-muted-foreground">JPG, PNG, PDF (MAX. 10MB)</p>
+          <p className="text-xs text-muted-foreground">JPG, PNG, PDF, DOCX (MAX. 10MB)</p>
         </div>
         <Input
           type="file"
-          accept="image/jpeg,image/png,application/pdf"
+          accept="image/jpeg,image/png,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
           className="absolute inset-0 w-full h-full opacity-0"
           onChange={handleFileChange}
           disabled={isUploading}
