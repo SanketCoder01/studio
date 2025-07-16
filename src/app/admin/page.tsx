@@ -1,5 +1,7 @@
 
 'use client';
+import { Suspense, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { ProfileForm } from '@/components/admin/profile-form';
 import { AboutForm } from '@/components/admin/about-form';
 import { ProjectsList } from '@/components/admin/projects-list';
@@ -15,10 +17,10 @@ import {
 import { Button } from '@/components/ui/button';
 import { usePortfolioData } from '@/hooks/use-portfolio-data';
 import { useToast } from '@/hooks/use-toast';
-import { useState, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
 import { Upload } from 'lucide-react';
 
+// This is the component that uses the client-side hook.
+// It is self-contained.
 function AdminContent() {
   const searchParams = useSearchParams();
   const section = searchParams.get('section') || 'profile';
@@ -40,6 +42,8 @@ function AdminContent() {
   return <div className="mt-6">{renderSection()}</div>;
 }
 
+// This component manages the overall page layout and data loading.
+// It wraps the client-dependent component in Suspense.
 function PageContent() {
   const { data, loading, seedData } = usePortfolioData();
   const { toast } = useToast();
@@ -114,7 +118,7 @@ function PageContent() {
   );
 }
 
-
+// The main export for the page.
 export default function AdminPage() {
   return <PageContent />;
 }
