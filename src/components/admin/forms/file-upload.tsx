@@ -26,7 +26,7 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 export function FileUpload({ value, onChange, enableCropper = false }: FileUploadProps) {
   const { toast } = useToast();
-  const [isUploading, setIsUploading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [cropperSrc, setCropperSrc] = useState<string | null>(null);
 
@@ -45,7 +45,7 @@ export function FileUpload({ value, onChange, enableCropper = false }: FileUploa
 
     const isImage = IMAGE_FILE_TYPES.includes(file.type);
     
-    setIsUploading(true);
+    setIsLoading(true);
     setProgress(0);
 
     const reader = new FileReader();
@@ -59,19 +59,18 @@ export function FileUpload({ value, onChange, enableCropper = false }: FileUploa
 
     reader.onload = () => {
       const dataUri = reader.result as string;
-      
       if (isImage && enableCropper) {
         setCropperSrc(dataUri);
       } else {
         onChange(dataUri);
-        setIsUploading(false);
+        setIsLoading(false);
         toast({ title: 'File Ready!', description: 'The file has been prepared for saving.' });
       }
     };
 
     reader.onerror = (error) => {
       console.error('FileReader error:', error);
-      setIsUploading(false);
+      setIsLoading(false);
       toast({ variant: 'destructive', title: 'Upload Failed', description: 'Failed to read the file.' });
     };
     
@@ -82,13 +81,13 @@ export function FileUpload({ value, onChange, enableCropper = false }: FileUploa
   const handleCropComplete = (croppedDataUri: string) => {
     onChange(croppedDataUri);
     setCropperSrc(null);
-    setIsUploading(false);
+    setIsLoading(false);
     toast({ title: "Image Cropped!", description: "The image has been prepared for saving." });
   };
   
   const handleCropClose = () => {
       setCropperSrc(null);
-      setIsUploading(false);
+      setIsLoading(false);
   }
 
   const handleRemove = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -143,11 +142,11 @@ export function FileUpload({ value, onChange, enableCropper = false }: FileUploa
       <label
         className={cn(
           'relative flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-muted/50 hover:bg-muted/80 transition-colors',
-          isUploading && !cropperSrc && 'cursor-wait opacity-70'
+          isLoading && !cropperSrc && 'cursor-wait opacity-70'
         )}
       >
         <div className="flex flex-col items-center justify-center pt-5 pb-6">
-          {isUploading && !cropperSrc ? (
+          {isLoading && !cropperSrc ? (
             <>
               <Loader2 className="w-10 h-10 mb-3 text-muted-foreground animate-spin" />
               <p className="mb-2 text-sm text-muted-foreground">
@@ -170,7 +169,7 @@ export function FileUpload({ value, onChange, enableCropper = false }: FileUploa
           accept={ALLOWED_FILE_TYPES.join(',')}
           className="absolute inset-0 w-full h-full opacity-0"
           onChange={handleFileChange}
-          disabled={isUploading}
+          disabled={isLoading}
         />
       </label>
     </div>

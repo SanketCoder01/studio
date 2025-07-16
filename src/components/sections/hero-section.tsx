@@ -58,8 +58,9 @@ export function HeroSection({ profile }: HeroSectionProps) {
                 <Image
                     src={profile.avatar}
                     alt={profile.name}
-                    fill
-                    className="object-cover"
+                    width={384}
+                    height={384}
+                    className="object-cover w-full h-full"
                     priority
                     data-ai-hint="profile picture"
                     unoptimized
