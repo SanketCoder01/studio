@@ -73,7 +73,6 @@ export function ProfileForm() {
                   <FormLabel>Avatar Image</FormLabel>
                   <FormControl>
                     <FileUpload 
-                      uploadKey={`avatar-${data?.profile?.id || 'new'}`} 
                       value={value} 
                       onChange={onChange}
                       enableCropper={true}
@@ -87,7 +86,6 @@ export function ProfileForm() {
                   <FormLabel>Your CV</FormLabel>
                   <FormControl>
                     <FileUpload 
-                      uploadKey={`cv-${data?.profile?.id || 'new'}`} 
                       value={value} 
                       onChange={onChange}
                     />

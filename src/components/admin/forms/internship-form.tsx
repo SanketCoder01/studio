@@ -67,8 +67,6 @@ export function InternshipForm({ isOpen, onOpenChange, onSubmit, initialData }: 
     }
   };
 
-  const uploadKeySuffix = initialData?.id || 'new';
-
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90vh] overflow-y-auto">
@@ -104,7 +102,7 @@ export function InternshipForm({ isOpen, onOpenChange, onSubmit, initialData }: 
                 <FormItem>
                   <FormLabel>Image Gallery</FormLabel>
                   <FormControl>
-                    <MultiImageUpload uploadKeyPrefix={`internship-gallery-${uploadKeySuffix}`} value={value} onChange={onChange} />
+                    <MultiImageUpload value={value} onChange={onChange} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -113,7 +111,7 @@ export function InternshipForm({ isOpen, onOpenChange, onSubmit, initialData }: 
                 <FormItem>
                   <FormLabel>Internship Report (Optional, PDF/DOCX)</FormLabel>
                   <FormControl>
-                    <FileUpload uploadKey={`internship-report-${uploadKeySuffix}`} value={value || ''} onChange={onChange} />
+                    <FileUpload value={value || ''} onChange={onChange} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -122,7 +120,7 @@ export function InternshipForm({ isOpen, onOpenChange, onSubmit, initialData }: 
                 <FormItem>
                   <FormLabel>Internship Certificate (Optional)</FormLabel>
                   <FormControl>
-                    <FileUpload uploadKey={`internship-cert-${uploadKeySuffix}`} value={value || ''} onChange={onChange} />
+                    <FileUpload value={value || ''} onChange={onChange} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

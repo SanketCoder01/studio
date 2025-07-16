@@ -13,7 +13,6 @@ import { Progress } from '@/components/ui/progress';
 type FileUploadProps = {
   value: string;
   onChange: (url: string) => void;
-  uploadKey: string;
   enableCropper?: boolean;
 };
 
@@ -27,7 +26,7 @@ const OTHER_FILE_TYPES = [
 const ALLOWED_FILE_TYPES = [...IMAGE_FILE_TYPES, ...OTHER_FILE_TYPES];
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
-export function FileUpload({ value, onChange, uploadKey, enableCropper = false }: FileUploadProps) {
+export function FileUpload({ value, onChange, enableCropper = false }: FileUploadProps) {
   const { toast } = useToast();
   const [status, setStatus] = useState<UploadStatus>('idle');
   const [progress, setProgress] = useState(0);
@@ -141,7 +140,7 @@ export function FileUpload({ value, onChange, uploadKey, enableCropper = false }
   }
 
   return (
-    <div key={uploadKey}>
+    <div>
       <ImageCropperModal
         src={cropperSrc}
         onClose={handleCropClose}

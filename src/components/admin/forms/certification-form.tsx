@@ -48,8 +48,6 @@ export function CertificationForm({ isOpen, onOpenChange, onSubmit, initialData 
     }
   };
   
-  const uploadKeySuffix = initialData?.id || 'new';
-
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent>
@@ -71,7 +69,7 @@ export function CertificationForm({ isOpen, onOpenChange, onSubmit, initialData 
                 <FormItem>
                   <FormLabel>Certificate Image</FormLabel>
                   <FormControl>
-                    <FileUpload uploadKey={`certification-image-${uploadKeySuffix}`} value={value} onChange={onChange} />
+                    <FileUpload value={value} onChange={onChange} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
