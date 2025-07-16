@@ -57,12 +57,12 @@ export function FileUpload({ value, onChange, enableCropper = false }: FileUploa
     
     reader.onload = () => {
       const dataUri = reader.result as string;
-      const isImage = IMAGE_FILE_TYPES.includes(file.type);
+      const isImage = file.type.startsWith('image/');
 
       if (isImage && enableCropper) {
         setCropperSrc(dataUri);
         // Do not call onChange here; wait for cropping to complete.
-        // setIsLoading will be handled by the cropper modal.
+        // setIsLoading is set to false in handleCropClose or handleCropComplete
       } else {
         onChange(dataUri);
         setIsLoading(false);
@@ -144,17 +144,17 @@ export function FileUpload({ value, onChange, enableCropper = false }: FileUploa
       <label
         className={cn(
           'relative flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-muted/50 hover:bg-muted/80 transition-colors',
-          isLoading && !cropperSrc && 'cursor-wait opacity-70'
+          isLoading && 'cursor-wait opacity-70'
         )}
       >
         <div className="flex flex-col items-center justify-center pt-5 pb-6">
-          {isLoading && !cropperSrc ? (
+          {isLoading ? (
             <>
               <Loader2 className="w-10 h-10 mb-3 text-muted-foreground animate-spin" />
               <p className="mb-2 text-sm text-muted-foreground">
-                <span className="font-semibold">Processing: {progress}%</span>
+                <span className="font-semibold">Processing...</span>
               </p>
-              <Progress value={progress} className="w-3/4 h-2" />
+               { progress > 0 && <Progress value={progress} className="w-3/4 h-2" /> }
             </>
           ) : (
             <>
