@@ -22,6 +22,8 @@ import { LogoutButton } from '@/components/auth/logout-button';
 import { useAuth } from '@/hooks/use-auth';
 import { usePortfolioData } from '@/hooks/use-portfolio-data';
 
+export const dynamic = 'force-dynamic';
+
 const navItems = [
     { id: 'profile', label: 'Profile', icon: User, href: '/admin?section=profile' },
     { id: 'about', label: 'About', icon: BookUser, href: '/admin?section=about' },
