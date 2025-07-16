@@ -15,7 +15,7 @@ import {
   SidebarInset,
 } from '@/components/ui/sidebar';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Home, User, BookUser, Briefcase, GraduationCap, Award, Building2, Mail, PanelLeft, LogOut } from 'lucide-react';
+import { Home, User, BookUser, Briefcase, GraduationCap, Award, Building2, Mail, PanelLeft, LogOut, Construction } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { LogoutButton } from '@/components/auth/logout-button';
@@ -89,6 +89,11 @@ export default function AdminLayout({
              <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip="Projects" href="/admin#projects">
                     <Link href="/admin#projects"><Briefcase /><span>Projects</span></Link>
+                </SidebarMenuButton>
+            </SidebarMenuItem>
+             <SidebarMenuItem>
+                <SidebarMenuButton asChild tooltip="Ongoing Projects" href="/admin#ongoing-projects">
+                    <Link href="/admin#ongoing-projects"><Construction /><span>Ongoing Projects</span></Link>
                 </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>

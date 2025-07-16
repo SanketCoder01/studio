@@ -6,6 +6,7 @@ import { AboutSection } from '@/components/sections/about-section';
 import { EducationSection } from '@/components/sections/education-section';
 import { InternshipsSection } from '@/components/sections/internships-section';
 import { ProjectsSection } from '@/components/sections/projects-section';
+import { OngoingProjectsSection } from '@/components/sections/ongoing-projects-section';
 import { CertificationsSection } from '@/components/sections/certifications-section';
 import { ContactSection } from '@/components/sections/contact-section';
 import { Footer } from '@/components/footer';
@@ -57,7 +58,7 @@ export default function Home() {
     return <PageSkeleton />;
   }
 
-  const { profile, education, internships, projects, certifications } = data;
+  const { profile, education, internships, projects, ongoingProjects, certifications } = data;
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -66,6 +67,7 @@ export default function Home() {
         <HeroSection profile={profile} />
         <AboutSection about={profile.about} cvUrl={profile.cvUrl} />
         <ProjectsSection projects={projects} />
+        <OngoingProjectsSection projects={ongoingProjects} />
         <InternshipsSection internships={internships} />
         <EducationSection education={education} />
         <CertificationsSection certifications={certifications} />

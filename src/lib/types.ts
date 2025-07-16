@@ -63,6 +63,7 @@ export type PortfolioData = {
   education: Education[];
   internships: Internship[];
   projects: Project[];
+  ongoingProjects: Project[];
   certifications: Certification[];
   contacts: Contact[];
 };

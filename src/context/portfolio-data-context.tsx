@@ -24,6 +24,11 @@ type PortfolioContextType = {
     updateItem: (item: Project) => Promise<void>;
     deleteItem: (id: string) => Promise<void>;
   };
+  ongoingProjects: {
+    addItem: (item: Omit<Project, 'id'>) => Promise<Project>;
+    updateItem: (item: Project) => Promise<void>;
+    deleteItem: (id: string) => Promise<void>;
+  };
   certifications: {
     addItem: (item: Omit<Certification, 'id'>) => Promise<Certification>;
     updateItem: (item: Certification) => Promise<void>;
@@ -56,9 +61,13 @@ export function PortfolioDataProvider({ children }: { children: ReactNode }) {
     setLoading(false);
   }, []);
 
-  const updateMemoryStore = (newData: PortfolioData | null) => {
-    memoryStore = newData;
-    setData(newData);
+  const updateMemoryStore = (newData: PortfolioData | null | ((prevData: PortfolioData | null) => PortfolioData | null)) => {
+    if (typeof newData === 'function') {
+        memoryStore = newData(memoryStore);
+    } else {
+        memoryStore = newData;
+    }
+    setData(memoryStore);
   };
 
   const seedData = useCallback(async () => {
@@ -117,6 +126,7 @@ export function PortfolioDataProvider({ children }: { children: ReactNode }) {
     education: crudFunction<Education>('education'),
     internships: crudFunction<Internship>('internships'),
     projects: crudFunction<Project>('projects'),
+    ongoingProjects: crudFunction<Project>('ongoingProjects'),
     certifications: crudFunction<Certification>('certifications'),
     contacts: crudFunction<Contact>('contacts'),
   };

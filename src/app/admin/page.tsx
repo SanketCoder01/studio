@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ProfileForm } from '@/components/admin/profile-form';
 import { AboutForm } from '@/components/admin/about-form';
 import { ProjectsList } from '@/components/admin/projects-list';
+import { OngoingProjectsList } from '@/components/admin/ongoing-projects-list';
 import { EducationList } from '@/components/admin/education-list';
 import { InternshipsList } from '@/components/admin/internships-list';
 import { CertificationsList } from '@/components/admin/certifications-list';
@@ -78,10 +79,11 @@ export default function AdminPage() {
 
       {data && (
         <Tabs defaultValue="profile" className="w-full fade-in-up" style={{ animationDelay: '0.2s' }}>
-          <TabsList className="grid w-full grid-cols-3 h-auto md:grid-cols-4 lg:grid-cols-7">
+          <TabsList className="grid w-full grid-cols-3 h-auto md:grid-cols-4 lg:grid-cols-8">
             <TabsTrigger value="profile">Profile</TabsTrigger>
             <TabsTrigger value="about">About</TabsTrigger>
             <TabsTrigger value="projects">Projects</TabsTrigger>
+            <TabsTrigger value="ongoing-projects">Ongoing</TabsTrigger>
             <TabsTrigger value="internships">Internships</TabsTrigger>
             <TabsTrigger value="education">Education</TabsTrigger>
             <TabsTrigger value="certifications">Certifications</TabsTrigger>
@@ -91,6 +93,7 @@ export default function AdminPage() {
           <div id="profile" className="pt-6"><TabsContent value="profile"><ProfileForm /></TabsContent></div>
           <div id="about" className="pt-6"><TabsContent value="about"><AboutForm /></TabsContent></div>
           <div id="projects" className="pt-6"><TabsContent value="projects"><ProjectsList /></TabsContent></div>
+          <div id="ongoing-projects" className="pt-6"><TabsContent value="ongoing-projects"><OngoingProjectsList /></TabsContent></div>
           <div id="internships" className="pt-6"><TabsContent value="internships"><InternshipsList /></TabsContent></div>
           <div id="education" className="pt-6"><TabsContent value="education"><EducationList /></TabsContent></div>
           <div id="certifications" className="pt-6"><TabsContent value="certifications"><CertificationsList /></TabsContent></div>

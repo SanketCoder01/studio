@@ -1,3 +1,4 @@
+
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -10,6 +11,7 @@ import { ThemeToggle } from '@/components/theme-toggle';
 const navLinks = [
   { href: '#about', label: 'About' },
   { href: '#projects', label: 'Projects' },
+  { href: '#ongoing-projects', label: 'Ongoing' },
   { href: '#internships', label: 'Internships' },
   { href: '#education', label: 'Education' },
   { href: '#certifications', label: 'Certifications' },
