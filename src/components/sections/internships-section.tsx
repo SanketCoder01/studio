@@ -7,6 +7,7 @@ import { BriefcaseBusiness, CalendarDays, MapPin, Eye, ChevronsDown } from 'luci
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { InternshipDetailsModal } from '@/components/internship-details-modal';
+import { cn } from '@/lib/utils';
 
 type InternshipsSectionProps = {
   internships: Internship[];
@@ -42,21 +43,27 @@ export function InternshipsSection({ internships }: InternshipsSectionProps) {
             <div className="space-y-12">
               {internships.map((internship, index) => (
                 <div key={internship.id} className="relative">
-                  <div className="absolute top-1/2 left-4 md:left-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 bg-background border-2 border-primary rounded-full" />
-                  <div className={`grid md:grid-cols-2 md:gap-8 items-center`}>
-                    <div className={`md:text-right ${index % 2 === 0 ? 'md:order-1' : 'md:order-2 md:col-start-2'}`}>
-                       <div className="p-6 ml-8 md:ml-0 bg-background rounded-xl border border-border shadow-md hover:shadow-primary/20 hover:border-primary/50 transition-all duration-300 hover:-translate-y-1">
-                        <InternshipCardContent internship={internship} formatDateRange={formatDateRange} onSelect={() => setSelectedInternship(internship)} rightAligned={index % 2 !== 0} />
+                  <div className="absolute top-5 left-4 md:left-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 bg-background border-2 border-primary rounded-full" />
+                  <div
+                    className={cn(
+                      'md:flex items-start',
+                      index % 2 === 0 ? 'md:flex-row-reverse' : ''
+                    )}
+                  >
+                    <div className="md:w-1/2">
+                      {/* This empty div creates the space on the opposite side */}
+                    </div>
+                    <div className="md:w-1/2">
+                       <div className={cn("p-6 ml-8 md:ml-0 bg-background rounded-xl border border-border shadow-md hover:shadow-primary/20 hover:border-primary/50 transition-all duration-300 hover:-translate-y-1", index % 2 === 0 ? 'md:mr-8' : 'md:ml-8')}>
+                        <InternshipCardContent internship={internship} formatDateRange={formatDateRange} onSelect={() => setSelectedInternship(internship)} rightAligned={index % 2 === 0} />
                       </div>
                     </div>
-                    {/* This empty div acts as a spacer on desktop */}
-                    <div className="hidden md:block"></div>
                   </div>
                 </div>
               ))}
             </div>
              {internships.length > 2 && (
-              <div className="text-center mt-12 animate-bounce">
+              <div className="text-center mt-16 animate-bounce">
                 <ChevronsDown className="h-8 w-8 mx-auto text-muted-foreground" />
                 <p className="text-sm text-muted-foreground">Scroll for more</p>
               </div>
@@ -75,12 +82,12 @@ export function InternshipsSection({ internships }: InternshipsSectionProps) {
 
 const InternshipCardContent = ({ internship, formatDateRange, onSelect, rightAligned }: { internship: Internship; formatDateRange: (start: string, end: string) => string; onSelect: () => void; rightAligned: boolean; }) => (
   <>
-    <div className={`flex items-center gap-2 text-sm text-muted-foreground mb-2 ${rightAligned ? 'md:justify-end' : ''}`}>
+    <div className={cn("flex items-center gap-2 text-sm text-muted-foreground mb-2", rightAligned ? 'md:justify-end' : '')}>
       <BriefcaseBusiness className="h-4 w-4" />
       <span>{internship.company}</span>
     </div>
-    <h3 className="font-headline text-xl font-semibold mb-2">{internship.role}</h3>
-    <div className={`flex items-start gap-4 text-sm text-muted-foreground mb-4 flex-wrap ${rightAligned ? 'md:justify-end' : ''}`}>
+    <h3 className={cn("font-headline text-xl font-semibold mb-2", rightAligned ? 'md:text-right' : 'text-left')}>{internship.role}</h3>
+    <div className={cn("flex items-start gap-4 text-sm text-muted-foreground mb-4 flex-wrap", rightAligned ? 'md:justify-end' : '')}>
       <div className="flex items-center gap-2">
         <CalendarDays className="h-4 w-4" />
         <span>{formatDateRange(internship.startDate, internship.endDate)}</span>
@@ -90,9 +97,11 @@ const InternshipCardContent = ({ internship, formatDateRange, onSelect, rightAli
         <span>{internship.location}</span>
       </div>
     </div>
-    <p className="text-foreground/80 text-sm line-clamp-3">{internship.description}</p>
-    <Button variant="link" onClick={onSelect} className={`p-0 h-auto mt-4 text-sm ${rightAligned ? 'md:float-right' : ''}`}>
-      View Details <Eye className="ml-2 h-4 w-4" />
-    </Button>
+    <p className={cn("text-foreground/80 text-sm line-clamp-3", rightAligned ? 'md:text-right' : 'text-left')}>{internship.description}</p>
+    <div className={cn('mt-4', rightAligned ? 'text-right' : 'text-left')}>
+      <Button variant="link" onClick={onSelect} className="p-0 h-auto text-sm">
+        View Details <Eye className="ml-2 h-4 w-4" />
+      </Button>
+    </div>
   </>
 );
