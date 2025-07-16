@@ -16,8 +16,6 @@ type FileUploadProps = {
   enableCropper?: boolean;
 };
 
-type UploadStatus = 'idle' | 'uploading' | 'error';
-
 const IMAGE_FILE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 const OTHER_FILE_TYPES = [
   'application/pdf',
@@ -28,11 +26,9 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 export function FileUpload({ value, onChange, enableCropper = false }: FileUploadProps) {
   const { toast } = useToast();
-  const [status, setStatus] = useState<UploadStatus>('idle');
+  const [isUploading, setIsUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [cropperSrc, setCropperSrc] = useState<string | null>(null);
-
-  const isUploading = status === 'uploading';
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -48,9 +44,8 @@ export function FileUpload({ value, onChange, enableCropper = false }: FileUploa
     }
 
     const isImage = IMAGE_FILE_TYPES.includes(file.type);
-    const needsCropping = enableCropper && isImage;
     
-    setStatus('uploading');
+    setIsUploading(true);
     setProgress(0);
 
     const reader = new FileReader();
@@ -65,43 +60,43 @@ export function FileUpload({ value, onChange, enableCropper = false }: FileUploa
     reader.onload = () => {
       const dataUri = reader.result as string;
       setProgress(100);
-      if (needsCropping) {
+      
+      // Corrected logic: Check if the file is an image AND if cropping is enabled
+      if (isImage && enableCropper) {
         setCropperSrc(dataUri);
       } else {
         onChange(dataUri);
-        setStatus('idle');
+        setIsUploading(false);
         toast({ title: 'File Ready!', description: 'The file has been prepared for saving.' });
       }
     };
 
     reader.onerror = (error) => {
       console.error('FileReader error:', error);
-      setStatus('error');
+      setIsUploading(false);
       toast({ variant: 'destructive', title: 'Upload Failed', description: 'Failed to read the file.' });
     };
     
     reader.readAsDataURL(file);
-    // Reset file input
     event.target.value = '';
   };
 
   const handleCropComplete = (croppedDataUri: string) => {
     onChange(croppedDataUri);
     setCropperSrc(null);
-    setStatus('idle');
+    setIsUploading(false);
     toast({ title: "Image Cropped!", description: "The image has been prepared for saving." });
   };
   
   const handleCropClose = () => {
       setCropperSrc(null);
-      setStatus('idle');
+      setIsUploading(false);
   }
 
   const handleRemove = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
     onChange('');
-    setStatus('idle');
     setProgress(0);
   };
 
