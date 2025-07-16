@@ -19,9 +19,14 @@ import { usePortfolioData } from '@/hooks/use-portfolio-data';
 import { useToast } from '@/hooks/use-toast';
 import { Upload } from 'lucide-react';
 
-function AdminContent() {
+function AdminContent({ data }: { data: any }) {
   const searchParams = useSearchParams();
   const section = searchParams.get('section') || 'profile';
+
+  if (!data) {
+    // Do not render section UI if data is not present
+    return null;
+  }
 
   const renderSection = () => {
     switch (section) {
@@ -100,16 +105,13 @@ function PageContent() {
           </CardContent>
         )}
       </Card>
-
-      {data && (
-         <Suspense fallback={
-            <div className="flex h-full min-h-[30vh] w-full items-center justify-center">
-                <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-            </div>
-         }>
-            <AdminContent />
-        </Suspense>
-      )}
+      <Suspense fallback={
+        <div className="flex h-full min-h-[30vh] w-full items-center justify-center">
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+        </div>
+      }>
+        <AdminContent data={data} />
+      </Suspense>
     </div>
   );
 }
