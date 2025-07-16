@@ -46,7 +46,6 @@ function AdminContent() {
   return <div className="mt-6">{renderSection()}</div>;
 }
 
-
 function PageContent() {
   const { data, loading, seedData } = usePortfolioData();
   const { toast } = useToast();
