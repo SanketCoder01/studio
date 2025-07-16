@@ -45,7 +45,6 @@ export function FileUpload({ value, onChange, enableCropper = false }: FileUploa
 
     setIsLoading(true);
     setProgress(0);
-
     const reader = new FileReader();
 
     reader.onprogress = (e) => {
@@ -61,8 +60,8 @@ export function FileUpload({ value, onChange, enableCropper = false }: FileUploa
 
       if (isImage && enableCropper) {
         setCropperSrc(dataUri);
-        // Do not call onChange here; wait for cropping to complete.
-        // setIsLoading is set to false in handleCropClose or handleCropComplete
+        // Do not call onChange here; wait for cropping.
+        // setIsLoading will be handled by the modal's close/complete actions.
       } else {
         onChange(dataUri);
         setIsLoading(false);
@@ -77,7 +76,7 @@ export function FileUpload({ value, onChange, enableCropper = false }: FileUploa
     };
     
     reader.readAsDataURL(file);
-    event.target.value = '';
+    event.target.value = ''; // Allow re-uploading the same file
   };
 
   const handleCropComplete = (croppedDataUri: string) => {

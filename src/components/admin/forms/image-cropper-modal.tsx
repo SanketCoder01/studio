@@ -22,13 +22,11 @@ export function ImageCropperModal({ src, onClose, onComplete }: ImageCropperModa
 
   function onImageLoad(e: React.SyntheticEvent<HTMLImageElement>) {
     const { width, height } = e.currentTarget;
-    const cropWidthInPercent = (MIN_DIMENSION / width) * 100;
-
-    const newCrop = centerCrop(
+    const crop = centerCrop(
       makeAspectCrop(
         {
           unit: '%',
-          width: cropWidthInPercent,
+          width: 90,
         },
         ASPECT_RATIO,
         width,
@@ -37,7 +35,7 @@ export function ImageCropperModal({ src, onClose, onComplete }: ImageCropperModa
       width,
       height
     );
-    setCrop(newCrop);
+    setCrop(crop);
   }
 
   function handleCrop() {
@@ -76,7 +74,7 @@ export function ImageCropperModal({ src, onClose, onComplete }: ImageCropperModa
     <Dialog open={!!src} onOpenChange={(isOpen) => !isOpen && onClose()}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Adjust Image</DialogTitle>
+          <DialogTitle>Crop Your Profile Picture</DialogTitle>
         </DialogHeader>
         <div className="my-4">
           {src && (
