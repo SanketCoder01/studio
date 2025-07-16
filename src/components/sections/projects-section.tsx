@@ -3,11 +3,11 @@
 
 import { useState } from 'react';
 import type { Project } from '@/lib/types';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import Image from 'next/image';
+import { Card, CardDescription, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Eye } from 'lucide-react';
 import { ProjectDetailsModal } from '@/components/project-details-modal';
+import { Badge } from '../ui/badge';
 
 type ProjectsSectionProps = {
   projects: Project[];
@@ -36,21 +36,17 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {projects.map((project) => (
-              <Card key={project.id} className="flex flex-col overflow-hidden group transition-all duration-300 bg-secondary/50 dark:bg-secondary/30 border-border hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2">
-                <div className="relative h-48 w-full overflow-hidden">
-                  <Image
-                    src={project.imageUrl}
-                    alt={project.title}
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-110"
-                    data-ai-hint="abstract technology"
-                    unoptimized
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                </div>
-                <div className="flex flex-col flex-grow p-6">
+              <Card key={project.id} className="flex flex-col group transition-all duration-300 bg-secondary/50 dark:bg-secondary/30 border-border hover:border-primary/50 hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-1 p-6">
+                 <div className="flex flex-col flex-grow">
                   <CardTitle className="font-headline text-2xl mb-2">{project.title}</CardTitle>
                   <CardDescription className="flex-grow mb-6 text-foreground/70">{project.description}</CardDescription>
+                   <div className="mb-4">
+                     <h4 className="text-sm font-semibold mb-2 text-muted-foreground">Tech Stack:</h4>
+                     <div className="flex flex-wrap gap-2">
+                        {project.technologies.slice(0, 4).map(tech => <Badge key={tech} variant="secondary">{tech}</Badge>)}
+                        {project.technologies.length > 4 && <Badge variant="outline">+{project.technologies.length - 4} more</Badge>}
+                    </div>
+                  </div>
                   <div className='mt-auto'>
                     <Button onClick={() => handleViewProject(project)} className="w-full">
                       View Details <Eye className="ml-2 h-4 w-4" />

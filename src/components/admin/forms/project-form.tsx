@@ -16,7 +16,6 @@ import { FileUpload } from './file-upload';
 const formSchema = z.object({
   title: z.string().optional(),
   description: z.string().optional(),
-  imageUrl: z.string().optional(),
   link: z.string().optional(),
   introduction: z.string().optional(),
   technologies: z.string().optional(),
@@ -34,7 +33,6 @@ type ProjectFormProps = {
 const defaultValues = {
     title: '',
     description: '',
-    imageUrl: '',
     link: '',
     introduction: '',
     technologies: '',
@@ -66,7 +64,6 @@ export function ProjectForm({ isOpen, onOpenChange, onSubmit, initialData }: Pro
     const processedValues = {
         title: values.title || '',
         description: values.description || '',
-        imageUrl: values.imageUrl || '',
         link: values.link || '',
         introduction: values.introduction || '',
         technologies: (values.technologies || '').split(',').map(item => item.trim()).filter(Boolean),
@@ -93,13 +90,6 @@ export function ProjectForm({ isOpen, onOpenChange, onSubmit, initialData }: Pro
             )} />
              <FormField control={form.control} name="description" render={({ field }) => (
                 <FormItem><FormLabel>Short Description (for card)</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
-            )} />
-             <FormField control={form.control} name="imageUrl" render={({ field: { onChange, value } }) => (
-                <FormItem>
-                    <FormLabel>Project Image</FormLabel>
-                    <FormControl><FileUpload value={value} onChange={onChange} /></FormControl>
-                    <FormMessage />
-                </FormItem>
             )} />
             <FormField control={form.control} name="link" render={({ field }) => (
                 <FormItem><FormLabel>Live Project Link</FormLabel><FormControl><Input placeholder="https://example.com" {...field} /></FormControl><FormMessage /></FormItem>

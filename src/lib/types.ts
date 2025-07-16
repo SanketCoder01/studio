@@ -33,7 +33,6 @@ export type Project = {
   id?: string;
   title: string;
   description: string;
-  imageUrl: string;
   link: string;
   introduction: string;
   technologies: string[];

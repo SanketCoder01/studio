@@ -2,7 +2,6 @@
 'use client';
 import type { Project } from '@/lib/types';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ExternalLink, FileDown, CheckCircle } from 'lucide-react';
@@ -20,20 +19,9 @@ export function ProjectDetailsModal({ project, isOpen, onOpenChange }: ProjectDe
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <div className="relative h-64 w-full rounded-lg overflow-hidden mb-6">
-            <Image
-              src={project.imageUrl}
-              alt={project.title}
-              fill
-              className="object-cover"
-              data-ai-hint="abstract technology"
-              unoptimized
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-            <div className="absolute bottom-4 left-6">
-              <DialogTitle className="font-headline text-3xl text-white">{project.title}</DialogTitle>
-              <DialogDescription className="text-lg text-primary-foreground/80">{project.description}</DialogDescription>
-            </div>
+          <div className="p-6 pb-2">
+              <DialogTitle className="font-headline text-3xl text-primary">{project.title}</DialogTitle>
+              <DialogDescription className="text-lg text-muted-foreground mt-1">{project.description}</DialogDescription>
           </div>
         </DialogHeader>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-6 pb-6">
