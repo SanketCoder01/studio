@@ -43,7 +43,6 @@ export default function AdminLayout({
   const { isAuthenticated, isAuthChecked } = useAuth();
   const { data: portfolioData, loading: portfolioLoading } = usePortfolioData();
   const router = useRouter();
-  const pathname = usePathname();
   const searchParams = useSearchParams();
   const currentSection = searchParams.get('section') || 'profile';
 

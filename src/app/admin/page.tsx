@@ -19,8 +19,6 @@ import { usePortfolioData } from '@/hooks/use-portfolio-data';
 import { useToast } from '@/hooks/use-toast';
 import { Upload } from 'lucide-react';
 
-// This is the component that uses the client-side hook.
-// It is self-contained.
 function AdminContent() {
   const searchParams = useSearchParams();
   const section = searchParams.get('section') || 'profile';
@@ -42,8 +40,6 @@ function AdminContent() {
   return <div className="mt-6">{renderSection()}</div>;
 }
 
-// This component manages the overall page layout and data loading.
-// It wraps the client-dependent component in Suspense.
 function PageContent() {
   const { data, loading, seedData } = usePortfolioData();
   const { toast } = useToast();
@@ -83,7 +79,7 @@ function PageContent() {
         <CardHeader>
           <div className="flex justify-between items-center">
             <div>
-              <CardTitle className="font-headline text-3xl">Welcome, Sanket!</CardTitle>
+              <CardTitle className="font-headline text-3xl">Welcome, {data?.profile?.name || 'Admin'}!</CardTitle>
               <CardDescription>
                 Select a section from the sidebar to manage your portfolio content.
               </CardDescription>
@@ -118,7 +114,6 @@ function PageContent() {
   );
 }
 
-// The main export for the page.
 export default function AdminPage() {
   return <PageContent />;
 }
