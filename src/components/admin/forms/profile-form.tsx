@@ -73,7 +73,7 @@ export function ProfileForm() {
                   <FormLabel>Avatar Image</FormLabel>
                   <FormControl>
                     <FileUpload 
-                      value={value} 
+                      value={value || ''} 
                       onChange={onChange}
                       enableCropper={true}
                     />
@@ -86,7 +86,7 @@ export function ProfileForm() {
                   <FormLabel>Your CV</FormLabel>
                   <FormControl>
                     <FileUpload 
-                      value={value} 
+                      value={value || ''} 
                       onChange={onChange}
                     />
                   </FormControl>

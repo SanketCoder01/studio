@@ -39,7 +39,7 @@ export function FileUpload({ value, onChange, enableCropper = false }: FileUploa
       return;
     }
     if (!ALLOWED_FILE_TYPES.includes(file.type)) {
-      toast({ variant: "destructive", title: "Invalid file type", description: "Please upload a JPG, PNG, PDF, or DOCX file." });
+      toast({ variant: "destructive", title: "Invalid file type", description: "Please upload an image, PDF, or DOCX file." });
       return;
     }
 
@@ -50,18 +50,16 @@ export function FileUpload({ value, onChange, enableCropper = false }: FileUploa
 
     const reader = new FileReader();
 
-    reader.onprogress = (event) => {
-      if (event.lengthComputable) {
-        const percent = Math.round((event.loaded / event.total) * 100);
+    reader.onprogress = (e) => {
+      if (e.lengthComputable) {
+        const percent = Math.round((e.loaded / e.total) * 100);
         setProgress(percent);
       }
     };
 
     reader.onload = () => {
       const dataUri = reader.result as string;
-      setProgress(100);
       
-      // Corrected logic: Check if the file is an image AND if cropping is enabled
       if (isImage && enableCropper) {
         setCropperSrc(dataUri);
       } else {
@@ -145,15 +143,15 @@ export function FileUpload({ value, onChange, enableCropper = false }: FileUploa
       <label
         className={cn(
           'relative flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-muted/50 hover:bg-muted/80 transition-colors',
-          isUploading && 'cursor-wait opacity-70'
+          isUploading && !cropperSrc && 'cursor-wait opacity-70'
         )}
       >
         <div className="flex flex-col items-center justify-center pt-5 pb-6">
-          {isUploading ? (
+          {isUploading && !cropperSrc ? (
             <>
               <Loader2 className="w-10 h-10 mb-3 text-muted-foreground animate-spin" />
               <p className="mb-2 text-sm text-muted-foreground">
-                <span className="font-semibold">Uploading: {progress}%</span>
+                <span className="font-semibold">Processing: {progress}%</span>
               </p>
               <Progress value={progress} className="w-3/4 h-2" />
             </>
