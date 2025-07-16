@@ -54,15 +54,17 @@ export function HeroSection({ profile }: HeroSectionProps) {
           <div className="order-1 flex justify-center md:order-2">
             <div className="relative h-72 w-72 md:h-96 md:w-96 group">
               <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-primary/50 to-blue-500/50 blur-2xl opacity-70 group-hover:opacity-90 transition-opacity duration-300"></div>
-              <Image
-                src={profile.avatar}
-                alt={profile.name}
-                fill
-                className="relative rounded-full object-cover border-4 border-background/50 shadow-2xl group-hover:scale-105 transition-transform duration-300"
-                priority
-                data-ai-hint="profile picture"
-                unoptimized
-              />
+              <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-background/50 shadow-2xl group-hover:scale-105 transition-transform duration-300">
+                <Image
+                    src={profile.avatar}
+                    alt={profile.name}
+                    fill
+                    className="object-cover"
+                    priority
+                    data-ai-hint="profile picture"
+                    unoptimized
+                />
+              </div>
             </div>
           </div>
         </div>
