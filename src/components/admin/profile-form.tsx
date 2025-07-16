@@ -72,7 +72,7 @@ export function ProfileForm() {
                 <FormItem>
                   <FormLabel>Avatar Image</FormLabel>
                   <FormControl>
-                    <FileUpload uploadKey={`avatar-${data?.profile.avatar}`} value={value} onChange={onChange} />
+                    <FileUpload uploadKey={`avatar-${data?.profile?.id || 'new'}`} value={value} onChange={onChange} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -81,7 +81,7 @@ export function ProfileForm() {
                 <FormItem>
                   <FormLabel>Your CV</FormLabel>
                   <FormControl>
-                    <FileUpload uploadKey={`cv-${data?.profile.cvUrl}`} value={value} onChange={onChange} />
+                    <FileUpload uploadKey={`cv-${data?.profile?.id || 'new'}`} value={value} onChange={onChange} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -95,3 +95,4 @@ export function ProfileForm() {
     </Card>
   );
 }
+

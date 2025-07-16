@@ -3,6 +3,7 @@ import type { PortfolioData } from '@/lib/types';
 
 export const portfolioData: PortfolioData = {
   profile: {
+    id: 'profile1',
     name: 'Sanket Gaikwad',
     avatar: 'https://placehold.co/400x400.png',
     title: 'Full Stack Developer & AI Enthusiast',
