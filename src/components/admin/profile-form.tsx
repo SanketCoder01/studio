@@ -36,8 +36,7 @@ export function ProfileForm() {
   }, [data?.profile, form]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    if (!data?.profile) return;
-    await updateProfile({ ...data.profile, ...values });
+    await updateProfile(values);
     toast({
       title: 'Profile Saved!',
       description: 'Your changes have been saved successfully.',
@@ -73,7 +72,7 @@ export function ProfileForm() {
                 <FormItem>
                   <FormLabel>Avatar Image</FormLabel>
                   <FormControl>
-                    <FileUpload key={`avatar-upload-${data?.profile?.avatar || ''}`} value={value} onChange={onChange} folder="avatars" />
+                    <FileUpload uploadKey={`avatar-${data?.profile.avatar}`} value={value} onChange={onChange} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -82,7 +81,7 @@ export function ProfileForm() {
                 <FormItem>
                   <FormLabel>Your CV</FormLabel>
                   <FormControl>
-                    <FileUpload key={`cv-upload-${data?.profile?.cvUrl || ''}`} value={value} onChange={onChange} folder="cvs" />
+                    <FileUpload uploadKey={`cv-${data?.profile.cvUrl}`} value={value} onChange={onChange} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

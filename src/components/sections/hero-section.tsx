@@ -27,7 +27,7 @@ export function HeroSection({ profile }: HeroSectionProps) {
             </h2>
             <div className="mt-8 flex flex-wrap justify-center gap-4 md:justify-start">
               <Button size="lg" asChild>
-                <a href={profile.cvUrl} download>
+                <a href={profile.cvUrl} download="Sanket_Gaikwad_CV.pdf">
                   <Download className="mr-2" />
                   Download CV
                 </a>
@@ -40,12 +40,12 @@ export function HeroSection({ profile }: HeroSectionProps) {
             </div>
              <div className="mt-8 flex justify-center gap-2 md:justify-start">
                 <Button variant="ghost" size="icon" asChild>
-                    <a href="https://github.com" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                    <a href="https://github.com/SanketCoder01/" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
                     <Github className="h-6 w-6" />
                     </a>
                 </Button>
                 <Button variant="ghost" size="icon" asChild>
-                    <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+                    <a href="https://www.linkedin.com/in/sanket-gaikwad-50134a314/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
                     <Linkedin className="h-6 w-6" />
                     </a>
                 </Button>

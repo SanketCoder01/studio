@@ -1,3 +1,4 @@
+
 import { Button } from '@/components/ui/button';
 import { FileText } from 'lucide-react';
 
@@ -25,7 +26,7 @@ export function AboutSection({ about, cvUrl }: AboutSectionProps) {
             </p>
             <div className="text-center mt-8">
               <Button asChild size="lg">
-                <a href={cvUrl} download>
+                <a href={cvUrl} download="Sanket_Gaikwad_CV.pdf">
                   <FileText className="mr-2 h-5 w-5" />
                   Download CV
                 </a>

@@ -5,7 +5,7 @@ import type { PortfolioData, Profile, Education, Internship, Project, Certificat
 import { portfolioData as initialData } from '@/lib/data';
 
 // This is our in-memory "database"
-let memoryState: PortfolioData | null = initialData;
+let memoryState: PortfolioData | null = null;
 let hasFetched = false;
 let isFetching = false;
 
@@ -36,10 +36,15 @@ async function fetchPortfolioData(force = false) {
     isFetching = true;
     broadcastChanges();
     
-    // Simulate fetching
+    // Simulate fetching, or use initial data if nothing is in memory yet
     setTimeout(() => {
-        console.log("Using initial data for portfolio.");
-        setData(initialData, true);
+        if (!memoryState) {
+            console.log("Using initial data for portfolio.");
+            setData(initialData, true);
+        } else {
+             console.log("Using existing in-memory data.");
+             setData(memoryState, true);
+        }
         console.log("Data loaded successfully.");
     }, 500);
 }
@@ -49,16 +54,17 @@ export const usePortfolioData = () => {
   const [state, setState] = useState({ data: memoryState, loading: !hasFetched || isFetching });
 
   useEffect(() => {
-    if (!hasFetched && !isFetching) {
-      fetchPortfolioData();
-    }
-    
     const listener = () => {
       setState({ data: memoryState, loading: !hasFetched || isFetching });
     };
 
     listeners.add(listener);
-    listener(); // Immediately update state on mount
+    
+    if (!hasFetched) {
+      fetchPortfolioData();
+    } else {
+      listener(); // Immediately update state on mount if data is already fetched
+    }
 
     return () => {
       listeners.delete(listener);
@@ -102,7 +108,12 @@ export const usePortfolioData = () => {
   }, []);
 
   const updateProfile = useCallback(async (newProfile: Profile) => {
-    if (!memoryState) return;
+    if (!memoryState) {
+        // Handle case where memoryState is null, perhaps initialize it
+        const initialState = { ...initialData, profile: newProfile };
+        setData(initialState);
+        return;
+    }
     setData({ ...memoryState, profile: newProfile });
   }, []);
 
