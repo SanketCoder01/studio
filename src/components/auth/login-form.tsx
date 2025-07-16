@@ -41,7 +41,7 @@ export function LoginForm() {
       
       toast({
         title: 'Login Successful',
-        description: 'Welcome back, Admin!',
+        description: 'Welcome back, Sanket!',
       });
       router.push('/admin');
     } else {

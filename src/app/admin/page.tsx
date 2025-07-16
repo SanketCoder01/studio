@@ -1,6 +1,5 @@
 
 'use client';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ProfileForm } from '@/components/admin/profile-form';
 import { AboutForm } from '@/components/admin/about-form';
 import { ProjectsList } from '@/components/admin/projects-list';
@@ -13,8 +12,39 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { usePortfolioData } from '@/hooks/use-portfolio-data';
 import { useToast } from '@/hooks/use-toast';
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Upload } from 'lucide-react';
+
+function AdminContent() {
+  const searchParams = useSearchParams();
+  const section = searchParams.get('section') || 'profile';
+
+  const renderSection = () => {
+    switch (section) {
+      case 'profile':
+        return <ProfileForm />;
+      case 'about':
+        return <AboutForm />;
+      case 'projects':
+        return <ProjectsList />;
+      case 'ongoing-projects':
+        return <OngoingProjectsList />;
+      case 'internships':
+        return <InternshipsList />;
+      case 'education':
+        return <EducationList />;
+      case 'certifications':
+        return <CertificationsList />;
+      case 'contacts':
+        return <ContactList />;
+      default:
+        return <ProfileForm />;
+    }
+  };
+
+  return <div className="mt-6">{renderSection()}</div>;
+}
 
 export default function AdminPage() {
   const { data, loading, seedData } = usePortfolioData();
@@ -55,9 +85,9 @@ export default function AdminPage() {
         <CardHeader>
           <div className="flex justify-between items-center">
             <div>
-              <CardTitle className="font-headline text-3xl">Welcome, Admin!</CardTitle>
+              <CardTitle className="font-headline text-3xl">Welcome, {data?.profile?.name.split(' ')[0] || 'Admin'}!</CardTitle>
               <CardDescription>
-                Use the tabs below to manage your portfolio content.
+                Select a section from the sidebar to manage your portfolio content.
               </CardDescription>
             </div>
             {!data && (
@@ -71,34 +101,16 @@ export default function AdminPage() {
         {!data && (
            <CardContent>
             <p className="text-destructive">
-                No data found in Firestore. Click the "Seed Initial Data" button to populate your database with the default content from `src/lib/data.ts`.
+                No data found. Click the "Seed Initial Data" button to populate with default content.
             </p>
            </CardContent>
         )}
       </Card>
 
       {data && (
-        <Tabs defaultValue="profile" className="w-full fade-in-up" style={{ animationDelay: '0.2s' }}>
-          <TabsList className="grid w-full grid-cols-3 h-auto md:grid-cols-4 lg:grid-cols-8">
-            <TabsTrigger value="profile">Profile</TabsTrigger>
-            <TabsTrigger value="about">About</TabsTrigger>
-            <TabsTrigger value="projects">Projects</TabsTrigger>
-            <TabsTrigger value="ongoing-projects">Ongoing</TabsTrigger>
-            <TabsTrigger value="internships">Internships</TabsTrigger>
-            <TabsTrigger value="education">Education</TabsTrigger>
-            <TabsTrigger value="certifications">Certifications</TabsTrigger>
-            <TabsTrigger value="contacts">Contacts</TabsTrigger>
-          </TabsList>
-          
-          <div id="profile" className="pt-6"><TabsContent value="profile"><ProfileForm /></TabsContent></div>
-          <div id="about" className="pt-6"><TabsContent value="about"><AboutForm /></TabsContent></div>
-          <div id="projects" className="pt-6"><TabsContent value="projects"><ProjectsList /></TabsContent></div>
-          <div id="ongoing-projects" className="pt-6"><TabsContent value="ongoing-projects"><OngoingProjectsList /></TabsContent></div>
-          <div id="internships" className="pt-6"><TabsContent value="internships"><InternshipsList /></TabsContent></div>
-          <div id="education" className="pt-6"><TabsContent value="education"><EducationList /></TabsContent></div>
-          <div id="certifications" className="pt-6"><TabsContent value="certifications"><CertificationsList /></TabsContent></div>
-          <div id="contacts" className="pt-6"><TabsContent value="contacts"><ContactList /></TabsContent></div>
-        </Tabs>
+        <Suspense fallback={<div className="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent" />}>
+            <AdminContent />
+        </Suspense>
       )}
     </div>
   );

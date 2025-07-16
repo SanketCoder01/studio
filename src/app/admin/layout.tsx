@@ -1,7 +1,7 @@
 
 'use client';
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
   SidebarProvider,
   Sidebar,
@@ -22,6 +22,17 @@ import { LogoutButton } from '@/components/auth/logout-button';
 import { useAuth } from '@/hooks/use-auth';
 import { usePortfolioData } from '@/hooks/use-portfolio-data';
 
+const navItems = [
+    { id: 'profile', label: 'Profile', icon: User, href: '/admin?section=profile' },
+    { id: 'about', label: 'About', icon: BookUser, href: '/admin?section=about' },
+    { id: 'projects', label: 'Projects', icon: Briefcase, href: '/admin?section=projects' },
+    { id: 'ongoing-projects', label: 'Ongoing Projects', icon: Construction, href: '/admin?section=ongoing-projects' },
+    { id: 'internships', label: 'Internships', icon: Building2, href: '/admin?section=internships' },
+    { id: 'education', label: 'Education', icon: GraduationCap, href: '/admin?section=education' },
+    { id: 'certifications', label: 'Certifications', icon: Award, href: '/admin?section=certifications' },
+    { id: 'contacts', label: 'Contacts', icon: Mail, href: '/admin?section=contacts' },
+];
+
 export default function AdminLayout({
   children,
 }: {
@@ -30,6 +41,9 @@ export default function AdminLayout({
   const { isAuthenticated, isAuthChecked } = useAuth();
   const { data: portfolioData, loading: portfolioLoading } = usePortfolioData();
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const currentSection = searchParams.get('section') || 'profile';
 
   useEffect(() => {
     // Wait until the auth check is complete
@@ -76,46 +90,13 @@ export default function AdminLayout({
         </SidebarHeader>
         <SidebarContent>
           <SidebarMenu>
-            <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Profile" href="/admin#profile">
-                    <Link href="/admin#profile"><User /><span>Profile</span></Link>
-                </SidebarMenuButton>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="About" href="/admin#about">
-                    <Link href="/admin#about"><BookUser /><span>About</span></Link>
-                </SidebarMenuButton>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Projects" href="/admin#projects">
-                    <Link href="/admin#projects"><Briefcase /><span>Projects</span></Link>
-                </SidebarMenuButton>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Ongoing Projects" href="/admin#ongoing-projects">
-                    <Link href="/admin#ongoing-projects"><Construction /><span>Ongoing Projects</span></Link>
-                </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Internships" href="/admin#internships">
-                    <Link href="/admin#internships"><Building2 /><span>Internships</span></Link>
-                </SidebarMenuButton>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Education" href="/admin#education">
-                    <Link href="/admin#education"><GraduationCap /><span>Education</span></Link>
-                </SidebarMenuButton>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Certifications" href="/admin#certifications">
-                    <Link href="/admin#certifications"><Award /><span>Certifications</span></Link>
-                </SidebarMenuButton>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Contacts" href="/admin#contacts">
-                    <Link href="/admin#contacts"><Mail /><span>Contacts</span></Link>
-                </SidebarMenuButton>
-            </SidebarMenuItem>
+            {navItems.map(item => (
+                <SidebarMenuItem key={item.id}>
+                    <SidebarMenuButton asChild tooltip={item.label} href={item.href} isActive={currentSection === item.id}>
+                        <Link href={item.href}><item.icon /><span>{item.label}</span></Link>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+            ))}
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter className="flex flex-col gap-2">
