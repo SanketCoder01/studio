@@ -84,7 +84,7 @@ export default function AdminLayout({
             </Avatar>
             <div className="flex flex-col">
               <span className="font-semibold">{profileName}</span>
-              <span className="text-xs text-muted-foreground">Admin</span>
+              <span className="text-xs text-muted-foreground">Portfolio Manager</span>
             </div>
           </div>
         </SidebarHeader>

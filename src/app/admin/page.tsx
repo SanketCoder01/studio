@@ -85,7 +85,7 @@ export default function AdminPage() {
         <CardHeader>
           <div className="flex justify-between items-center">
             <div>
-              <CardTitle className="font-headline text-3xl">Welcome, {data?.profile?.name.split(' ')[0] || 'Admin'}!</CardTitle>
+              <CardTitle className="font-headline text-3xl">Welcome, Sanket!</CardTitle>
               <CardDescription>
                 Select a section from the sidebar to manage your portfolio content.
               </CardDescription>
