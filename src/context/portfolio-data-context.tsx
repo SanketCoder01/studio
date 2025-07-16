@@ -38,31 +38,43 @@ type PortfolioContextType = {
 
 export const PortfolioContext = createContext<PortfolioContextType | undefined>(undefined);
 
+// A simple in-memory "store" to hold the data.
+// This ensures that the data persists across page navigations within the client session.
+let memoryStore: PortfolioData | null = null;
+
 export function PortfolioDataProvider({ children }: { children: ReactNode }) {
-  const [data, setData] = useState<PortfolioData | null>(null);
+  const [data, setData] = useState<PortfolioData | null>(memoryStore);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // In a real app, you might fetch from an API here.
-    // For now, we initialize with local data to simulate.
-    setData(initialData);
+    // Initialize data only if it's not already in our memory store.
+    // This prevents the data from being reset on every navigation.
+    if (!memoryStore) {
+      memoryStore = initialData;
+      setData(initialData);
+    }
     setLoading(false);
   }, []);
 
+  const updateMemoryStore = (newData: PortfolioData | null) => {
+    memoryStore = newData;
+    setData(newData);
+  };
+
   const seedData = useCallback(async () => {
     setLoading(true);
-    setData(initialData);
+    updateMemoryStore(initialData);
     setLoading(false);
   }, []);
 
   const updateProfile = useCallback(async (newProfile: Profile) => {
-    setData(prevData => prevData ? { ...prevData, profile: newProfile } : null);
+    updateMemoryStore(prevData => prevData ? { ...prevData, profile: newProfile } : null);
   }, []);
   
   const crudFunction = useCallback(<T extends { id?: string }>(collectionName: keyof PortfolioData) => {
     const addItem = async (newItem: Omit<T, 'id'>): Promise<T> => {
       const itemWithId = { ...newItem, id: new Date().toISOString() } as T;
-      setData(prevData => {
+      updateMemoryStore(prevData => {
         if (!prevData) return null;
         const currentItems = (prevData[collectionName] || []) as T[];
         let newItems;
@@ -78,7 +90,7 @@ export function PortfolioDataProvider({ children }: { children: ReactNode }) {
 
     const updateItem = async (updatedItem: T) => {
       if (!updatedItem.id) return;
-      setData(prevData => {
+      updateMemoryStore(prevData => {
         if (!prevData) return null;
         const newItems = ((prevData[collectionName] || []) as T[]).map(item => item.id === updatedItem.id ? updatedItem : item);
         return { ...prevData, [collectionName]: newItems };
@@ -87,7 +99,7 @@ export function PortfolioDataProvider({ children }: { children: ReactNode }) {
 
     const deleteItem = async (id: string) => {
       if (!id) return;
-      setData(prevData => {
+      updateMemoryStore(prevData => {
         if (!prevData) return null;
         const newItems = ((prevData[collectionName] || []) as T[]).filter(item => item.id !== id);
         return { ...prevData, [collectionName]: newItems };

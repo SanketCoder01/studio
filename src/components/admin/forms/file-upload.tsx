@@ -14,6 +14,7 @@ type FileUploadProps = {
   value: string;
   onChange: (url: string) => void;
   uploadKey: string;
+  enableCropper?: boolean;
 };
 
 type UploadStatus = 'idle' | 'uploading' | 'cropping' | 'error';
@@ -26,7 +27,7 @@ const OTHER_FILE_TYPES = [
 const ALLOWED_FILE_TYPES = [...IMAGE_FILE_TYPES, ...OTHER_FILE_TYPES];
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
-export function FileUpload({ value, onChange, uploadKey }: FileUploadProps) {
+export function FileUpload({ value, onChange, uploadKey, enableCropper = false }: FileUploadProps) {
   const { toast } = useToast();
   const [status, setStatus] = useState<UploadStatus>('idle');
   const [progress, setProgress] = useState(0);
@@ -47,7 +48,8 @@ export function FileUpload({ value, onChange, uploadKey }: FileUploadProps) {
       return;
     }
 
-    const needsCropping = IMAGE_FILE_TYPES.includes(file.type);
+    const isImage = IMAGE_FILE_TYPES.includes(file.type);
+    const needsCropping = enableCropper && isImage;
     
     setStatus('uploading');
     setProgress(0);
@@ -112,7 +114,11 @@ export function FileUpload({ value, onChange, uploadKey }: FileUploadProps) {
 
     return (
       <div className="relative flex items-center p-2 mt-2 border rounded-md bg-muted/50">
-        <FileIcon className="w-10 h-10 text-muted-foreground" />
+        {isImage ? (
+           <img src={value} alt="preview" className="w-10 h-10 object-cover rounded-sm" />
+        ) : (
+          <FileIcon className="w-10 h-10 text-muted-foreground" />
+        )}
         <a
           href={value}
           target="_blank"
