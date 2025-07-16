@@ -14,13 +14,13 @@ import { useEffect } from 'react';
 import { FileUpload } from './file-upload';
 
 const formSchema = z.object({
-  title: z.string().min(1, 'Title is required.'),
-  description: z.string().min(1, 'Description is required.'),
-  imageUrl: z.string().min(1, 'Please upload a project image.'),
-  link: z.string().url('Must be a valid URL.'),
-  introduction: z.string().min(1, 'Introduction is required.'),
-  technologies: z.string().min(1, 'Please list at least one technology.'),
-  features: z.string().min(1, 'Please list at least one feature.'),
+  title: z.string().optional(),
+  description: z.string().optional(),
+  imageUrl: z.string().optional(),
+  link: z.string().optional(),
+  introduction: z.string().optional(),
+  technologies: z.string().optional(),
+  features: z.string().optional(),
   reportUrl: z.string().optional(),
 });
 
@@ -64,9 +64,14 @@ export function ProjectForm({ isOpen, onOpenChange, onSubmit, initialData }: Pro
 
   const handleSubmit = (values: z.infer<typeof formSchema>) => {
     const processedValues = {
-        ...values,
-        technologies: values.technologies.split(',').map(item => item.trim()),
-        features: values.features.split(',').map(item => item.trim()),
+        title: values.title || '',
+        description: values.description || '',
+        imageUrl: values.imageUrl || '',
+        link: values.link || '',
+        introduction: values.introduction || '',
+        technologies: (values.technologies || '').split(',').map(item => item.trim()).filter(Boolean),
+        features: (values.features || '').split(',').map(item => item.trim()).filter(Boolean),
+        reportUrl: values.reportUrl || '',
     };
     if (initialData) {
       onSubmit({ ...initialData, ...processedValues });

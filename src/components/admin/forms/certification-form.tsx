@@ -13,10 +13,10 @@ import { useEffect } from 'react';
 import { FileUpload } from './file-upload';
 
 const formSchema = z.object({
-  name: z.string().min(1, 'Name is required.'),
-  issuer: z.string().min(1, 'Issuer is required.'),
-  date: z.string().min(1, 'Date is required.'),
-  imageUrl: z.string().min(1, 'Please upload a certificate image.'),
+  name: z.string().optional(),
+  issuer: z.string().optional(),
+  date: z.string().optional(),
+  imageUrl: z.string().optional(),
 });
 
 type CertificationFormProps = {
@@ -41,10 +41,16 @@ export function CertificationForm({ isOpen, onOpenChange, onSubmit, initialData 
   }, [initialData, form, isOpen]);
 
   const handleSubmit = (values: z.infer<typeof formSchema>) => {
+    const finalValues = {
+        name: values.name || '',
+        issuer: values.issuer || '',
+        date: values.date || '',
+        imageUrl: values.imageUrl || '',
+    }
     if (initialData) {
-      onSubmit({ ...initialData, ...values });
+      onSubmit({ ...initialData, ...finalValues });
     } else {
-      onSubmit(values);
+      onSubmit(finalValues);
     }
   };
   

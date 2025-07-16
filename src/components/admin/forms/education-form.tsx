@@ -12,9 +12,9 @@ import type { Education } from '@/lib/types';
 import { useEffect } from 'react';
 
 const formSchema = z.object({
-  school: z.string().min(1, 'School name is required.'),
-  degree: z.string().min(1, 'Degree is required.'),
-  period: z.string().min(1, 'Period is required.'),
+  school: z.string().optional(),
+  degree: z.string().optional(),
+  period: z.string().optional(),
 });
 
 type EducationFormProps = {
@@ -31,14 +31,21 @@ export function EducationForm({ isOpen, onOpenChange, onSubmit, initialData }: E
   });
 
   useEffect(() => {
-    form.reset(initialData || { school: '', degree: '', period: '' });
-  }, [initialData, form]);
+    if (isOpen) {
+      form.reset(initialData || { school: '', degree: '', period: '' });
+    }
+  }, [initialData, form, isOpen]);
 
   const handleSubmit = (values: z.infer<typeof formSchema>) => {
+    const finalValues = {
+        school: values.school || '',
+        degree: values.degree || '',
+        period: values.period || '',
+    };
     if (initialData) {
-      onSubmit({ ...initialData, ...values });
+      onSubmit({ ...initialData, ...finalValues });
     } else {
-      onSubmit(values);
+      onSubmit(finalValues);
     }
   };
 

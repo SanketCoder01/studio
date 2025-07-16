@@ -14,10 +14,10 @@ import { useEffect } from 'react';
 import { FileUpload } from '@/components/admin/forms/file-upload';
 
 const formSchema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters.'),
-  title: z.string().min(5, 'Title must be at least 5 characters.'),
-  cvUrl: z.string().min(1, 'Please upload your CV.'),
-  avatar: z.string().min(1, 'Please upload an avatar image.'),
+  name: z.string().optional(),
+  title: z.string().optional(),
+  cvUrl: z.string().optional(),
+  avatar: z.string().optional(),
 });
 
 export function ProfileForm() {
@@ -36,7 +36,14 @@ export function ProfileForm() {
   }, [data?.profile, form]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    await updateProfile(values);
+    const finalValues = {
+        name: values.name || '',
+        title: values.title || '',
+        cvUrl: values.cvUrl || '',
+        avatar: values.avatar || '',
+        about: data?.profile.about || '',
+    }
+    await updateProfile(finalValues);
     toast({
       title: 'Profile Saved!',
       description: 'Your changes have been saved successfully.',

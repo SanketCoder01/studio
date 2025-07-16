@@ -15,14 +15,14 @@ import { FileUpload } from './file-upload';
 import { MultiImageUpload } from './multi-image-upload';
 
 const formSchema = z.object({
-  company: z.string().min(1, 'Company name is required.'),
-  role: z.string().min(1, 'Role is required.'),
-  startDate: z.string().min(1, 'Start date is required.'),
-  endDate: z.string().min(1, 'End date is required.'),
-  location: z.string().min(1, 'Location is required.'),
-  description: z.string().min(1, 'Description is required.'),
-  memories: z.string().min(1, 'Memories are required.'),
-  images: z.array(z.string()).min(1, 'Please upload at least one image.'),
+  company: z.string().optional(),
+  role: z.string().optional(),
+  startDate: z.string().optional(),
+  endDate: z.string().optional(),
+  location: z.string().optional(),
+  description: z.string().optional(),
+  memories: z.string().optional(),
+  images: z.array(z.string()).optional(),
   certificateUrl: z.string().optional(),
   reportUrl: z.string().optional(),
 });
@@ -60,10 +60,22 @@ export function InternshipForm({ isOpen, onOpenChange, onSubmit, initialData }: 
   }, [initialData, form, isOpen]);
 
   const handleSubmit = (values: z.infer<typeof formSchema>) => {
+    const finalValues = {
+      company: values.company || '',
+      role: values.role || '',
+      startDate: values.startDate || '',
+      endDate: values.endDate || '',
+      location: values.location || '',
+      description: values.description || '',
+      memories: values.memories || '',
+      images: values.images || [],
+      certificateUrl: values.certificateUrl || '',
+      reportUrl: values.reportUrl || '',
+    };
     if (initialData) {
-      onSubmit({ ...initialData, ...values });
+      onSubmit({ ...initialData, ...finalValues });
     } else {
-      onSubmit(values);
+      onSubmit(finalValues);
     }
   };
 
@@ -102,7 +114,7 @@ export function InternshipForm({ isOpen, onOpenChange, onSubmit, initialData }: 
                 <FormItem>
                   <FormLabel>Image Gallery</FormLabel>
                   <FormControl>
-                    <MultiImageUpload value={value} onChange={onChange} />
+                    <MultiImageUpload value={value || []} onChange={onChange} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

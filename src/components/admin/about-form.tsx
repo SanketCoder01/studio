@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useForm } from 'react-hook-form';
@@ -12,7 +13,7 @@ import { usePortfolioData } from '@/hooks/use-portfolio-data';
 import { useEffect } from 'react';
 
 const formSchema = z.object({
-  about: z.string().min(20, 'About section must be at least 20 characters.'),
+  about: z.string().optional(),
 });
 
 export function AboutForm() {
@@ -34,7 +35,7 @@ export function AboutForm() {
   
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!data?.profile) return;
-    await updateProfile({ ...data.profile, about: values.about });
+    await updateProfile({ ...data.profile, about: values.about || '' });
     toast({
       title: 'About Section Saved!',
       description: 'Your changes have been saved successfully.',
