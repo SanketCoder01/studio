@@ -1,9 +1,12 @@
 'use client';
-import {
-  ProfileForm, AboutForm, ProjectsList,
-  OngoingProjectsList, EducationList, InternshipsList,
-  CertificationsList, ContactList
-} from '@/components/admin';
+import { ProfileForm } from '@/components/admin/profile-form';
+import { AboutForm } from '@/components/admin/about-form';
+import { ProjectsList } from '@/components/admin/projects-list';
+import { OngoingProjectsList } from '@/components/admin/ongoing-projects-list';
+import { EducationList } from '@/components/admin/education-list';
+import { InternshipsList } from '@/components/admin/internships-list';
+import { CertificationsList } from '@/components/admin/certifications-list';
+import { ContactList } from '@/components/admin/contact-list';
 import {
   Card, CardContent, CardDescription,
   CardHeader, CardTitle
@@ -15,7 +18,10 @@ import { useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Upload } from 'lucide-react';
 
-function AdminContent({ section }: { section: string }) {
+function AdminContent() {
+  const searchParams = useSearchParams();
+  const section = searchParams.get('section') || 'profile';
+
   const renderSection = () => {
     switch (section) {
       case 'profile': return <ProfileForm />;
@@ -34,9 +40,6 @@ function AdminContent({ section }: { section: string }) {
 }
 
 function PageContent() {
-  const searchParams = useSearchParams();
-  const section = searchParams.get('section') || 'profile';
-
   const { data, loading, seedData } = usePortfolioData();
   const { toast } = useToast();
   const [isSeeding, setIsSeeding] = useState(false);
@@ -98,11 +101,14 @@ function PageContent() {
       </Card>
 
       {data && (
-        <AdminContent section={section} />
+         <Suspense fallback={<div className="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent" />}>
+            <AdminContent />
+        </Suspense>
       )}
     </div>
   );
 }
+
 
 export default function AdminPage() {
   return <PageContent />;
