@@ -1,3 +1,4 @@
+
 'use client';
 import { ProfileForm } from '@/components/admin/profile-form';
 import { AboutForm } from '@/components/admin/about-form';
@@ -101,7 +102,11 @@ function PageContent() {
       </Card>
 
       {data && (
-         <Suspense fallback={<div className="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent" />}>
+         <Suspense fallback={
+            <div className="flex h-full min-h-[30vh] w-full items-center justify-center">
+                <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+            </div>
+         }>
             <AdminContent />
         </Suspense>
       )}
