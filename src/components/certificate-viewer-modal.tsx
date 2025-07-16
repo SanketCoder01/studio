@@ -1,7 +1,7 @@
 
 'use client';
 import type { Certification } from '@/lib/types';
-import { Dialog, DialogContent, DialogClose } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogClose, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import Image from 'next/image';
 import { X } from 'lucide-react';
 import { Button } from './ui/button';
@@ -18,6 +18,9 @@ export function CertificateViewerModal({ certificate, isOpen, onOpenChange }: Ce
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="p-0 border-0 bg-transparent shadow-none w-full max-w-5xl">
+        <DialogHeader className="sr-only">
+          <DialogTitle>{certificate.name}</DialogTitle>
+        </DialogHeader>
         <div className="relative aspect-video w-full h-full">
           <Image
             src={certificate.imageUrl}
