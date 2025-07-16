@@ -26,7 +26,7 @@ export function ProfileForm() {
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: data?.profile,
+    defaultValues: data?.profile || { name: '', title: '', cvUrl: '', avatar: '' },
   });
 
   useEffect(() => {
