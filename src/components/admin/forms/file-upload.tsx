@@ -16,7 +16,7 @@ type FileUploadProps = {
   enableCropper?: boolean;
 };
 
-type UploadStatus = 'idle' | 'uploading' | 'cropping' | 'error';
+type UploadStatus = 'idle' | 'uploading' | 'error';
 
 const IMAGE_FILE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 const OTHER_FILE_TYPES = [
@@ -66,7 +66,6 @@ export function FileUpload({ value, onChange, enableCropper = false }: FileUploa
       const dataUri = reader.result as string;
       setProgress(100);
       if (needsCropping) {
-        setStatus('cropping');
         setCropperSrc(dataUri);
       } else {
         onChange(dataUri);
@@ -141,11 +140,13 @@ export function FileUpload({ value, onChange, enableCropper = false }: FileUploa
 
   return (
     <div>
-      <ImageCropperModal
-        src={cropperSrc}
-        onClose={handleCropClose}
-        onComplete={handleCropComplete}
-      />
+      {cropperSrc && (
+        <ImageCropperModal
+            src={cropperSrc}
+            onClose={handleCropClose}
+            onComplete={handleCropComplete}
+        />
+      )}
       <label
         className={cn(
           'relative flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-muted/50 hover:bg-muted/80 transition-colors',
