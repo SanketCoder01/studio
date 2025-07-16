@@ -46,7 +46,8 @@ function AdminContent() {
   return <div className="mt-6">{renderSection()}</div>;
 }
 
-export default function AdminPage() {
+
+function PageContent() {
   const { data, loading, seedData } = usePortfolioData();
   const { toast } = useToast();
   const [isSeeding, setIsSeeding] = useState(false);
@@ -108,10 +109,18 @@ export default function AdminPage() {
       </Card>
 
       {data && (
-        <Suspense fallback={<div className="mt-6 h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent" />}>
-            <AdminContent />
-        </Suspense>
+        <AdminContent />
       )}
     </div>
   );
+}
+
+export default function AdminPage() {
+  return (
+    <Suspense fallback={<div className="flex h-full min-h-[50vh] w-full items-center justify-center">
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+      </div>}>
+      <PageContent />
+    </Suspense>
+  )
 }
