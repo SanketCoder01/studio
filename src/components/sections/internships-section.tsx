@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import type { Internship } from '@/lib/types';
-import { BriefcaseBusiness, CalendarDays, MapPin, Eye, ChevronsDown } from 'lucide-react';
+import { BriefcaseBusiness, CalendarDays, MapPin, Eye } from 'lucide-react';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { InternshipDetailsModal } from '@/components/internship-details-modal';
@@ -62,12 +62,6 @@ export function InternshipsSection({ internships }: InternshipsSectionProps) {
                 </div>
               ))}
             </div>
-             {internships.length > 2 && (
-              <div className="text-center mt-16 animate-bounce">
-                <ChevronsDown className="h-8 w-8 mx-auto text-muted-foreground" />
-                <p className="text-sm text-muted-foreground">Scroll for more</p>
-              </div>
-            )}
           </div>
         </div>
       </section>
