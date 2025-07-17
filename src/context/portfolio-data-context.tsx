@@ -1,8 +1,21 @@
 
 'use client';
 import { useState, useEffect, useCallback, createContext, ReactNode } from 'react';
+import {
+  collection,
+  doc,
+  getDocs,
+  writeBatch,
+  setDoc,
+  deleteDoc,
+  getDoc,
+  query,
+  orderBy,
+  limit,
+} from 'firebase/firestore';
+import { db, initializeDb } from '@/lib/firebase';
 import type { PortfolioData, Profile, Education, Internship, Project, Certification, Contact } from '@/lib/types';
-import { portfolioData as initialData } from '@/lib/data';
+import { portfolioData as initialSeedData } from '@/lib/data';
 
 type PortfolioContextType = {
   data: PortfolioData | null;
@@ -43,80 +56,124 @@ type PortfolioContextType = {
 
 export const PortfolioContext = createContext<PortfolioContextType | undefined>(undefined);
 
-// A simple in-memory "store" to hold the data.
-// This ensures that the data persists across page navigations within the client session.
-let memoryStore: PortfolioData | null = null;
+const COLLECTION_NAMES = {
+    profile: 'profile',
+    education: 'education',
+    internships: 'internships',
+    projects: 'projects',
+    ongoingProjects: 'ongoingProjects',
+    certifications: 'certifications',
+    contacts: 'contacts',
+};
 
 export function PortfolioDataProvider({ children }: { children: ReactNode }) {
-  const [data, setData] = useState<PortfolioData | null>(memoryStore);
+  const [data, setData] = useState<PortfolioData | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    // Initialize data only if it's not already in our memory store.
-    // This prevents the data from being reset on every navigation.
-    if (!memoryStore) {
-      memoryStore = initialData;
-      setData(initialData);
+  const loadData = useCallback(async () => {
+    setLoading(true);
+    initializeDb();
+    if (!db) {
+      console.error("Firestore is not initialized.");
+      setLoading(false);
+      return;
     }
-    setLoading(false);
+
+    try {
+      const profileDoc = await getDoc(doc(db, COLLECTION_NAMES.profile, 'main'));
+      if (!profileDoc.exists()) {
+        setData(null);
+        setLoading(false);
+        return;
+      }
+
+      const collections = {
+        education: getDocs(query(collection(db, COLLECTION_NAMES.education), orderBy('period', 'desc'))),
+        internships: getDocs(query(collection(db, COLLECTION_NAMES.internships), orderBy('startDate', 'desc'))),
+        projects: getDocs(query(collection(db, COLLECTION_NAMES.projects))),
+        ongoingProjects: getDocs(query(collection(db, COLLECTION_NAMES.ongoingProjects))),
+        certifications: getDocs(query(collection(db, COLLECTION_NAMES.certifications), orderBy('date', 'desc'))),
+        contacts: getDocs(query(collection(db, COLLECTION_NAMES.contacts), orderBy('received', 'desc'))),
+      };
+
+      const [education, internships, projects, ongoingProjects, certifications, contacts] = await Promise.all(Object.values(collections));
+
+      const loadedData: PortfolioData = {
+        profile: profileDoc.data() as Profile,
+        education: education.docs.map(d => ({ id: d.id, ...d.data() })) as Education[],
+        internships: internships.docs.map(d => ({ id: d.id, ...d.data() })) as Internship[],
+        projects: projects.docs.map(d => ({ id: d.id, ...d.data() })) as Project[],
+        ongoingProjects: ongoingProjects.docs.map(d => ({ id: d.id, ...d.data() })) as Project[],
+        certifications: certifications.docs.map(d => ({ id: d.id, ...d.data() })) as Certification[],
+        contacts: contacts.docs.map(d => ({ id: d.id, ...d.data() })) as Contact[],
+      };
+      
+      setData(loadedData);
+    } catch (error) {
+      console.error("Error loading portfolio data:", error);
+      setData(null);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  const updateMemoryStore = (newData: PortfolioData | null | ((prevData: PortfolioData | null) => PortfolioData | null)) => {
-    if (typeof newData === 'function') {
-        memoryStore = newData(memoryStore);
-    } else {
-        memoryStore = newData;
-    }
-    setData(memoryStore);
-  };
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const seedData = useCallback(async () => {
+    initializeDb();
+    if (!db) return;
     setLoading(true);
-    updateMemoryStore(initialData);
-    setLoading(false);
-  }, []);
+    const batch = writeBatch(db);
+
+    // Profile
+    batch.set(doc(db, COLLECTION_NAMES.profile, 'main'), initialSeedData.profile);
+    // Other collections
+    Object.entries(initialSeedData).forEach(([key, value]) => {
+        if (key !== 'profile' && Array.isArray(value)) {
+            value.forEach(item => {
+                const { id, ...data } = item;
+                const docRef = doc(collection(db, key as keyof typeof COLLECTION_NAMES));
+                batch.set(docRef, data);
+            });
+        }
+    });
+
+    await batch.commit();
+    await loadData();
+  }, [loadData]);
 
   const updateProfile = useCallback(async (newProfile: Profile) => {
-    updateMemoryStore(prevData => prevData ? { ...prevData, profile: newProfile } : null);
-  }, []);
+    if (!db) return;
+    await setDoc(doc(db, COLLECTION_NAMES.profile, 'main'), newProfile, { merge: true });
+    await loadData();
+  }, [loadData]);
   
-  const crudFunction = useCallback(<T extends { id?: string }>(collectionName: keyof PortfolioData) => {
+  const crudFunction = useCallback(<T extends { id?: string }>(collectionName: keyof typeof COLLECTION_NAMES) => {
     const addItem = async (newItem: Omit<T, 'id'>): Promise<T> => {
-      const itemWithId = { ...newItem, id: new Date().toISOString() } as T;
-      updateMemoryStore(prevData => {
-        if (!prevData) return null;
-        const currentItems = (prevData[collectionName] || []) as T[];
-        let newItems;
-        if (collectionName === 'contacts') {
-          newItems = [itemWithId, ...currentItems];
-        } else {
-          newItems = [...currentItems, itemWithId];
-        }
-        return { ...prevData, [collectionName]: newItems };
-      });
-      return itemWithId;
+      if (!db) throw new Error("DB not initialized");
+      const docRef = doc(collection(db, collectionName));
+      await setDoc(docRef, newItem);
+      await loadData();
+      return { id: docRef.id, ...newItem } as T;
     };
 
     const updateItem = async (updatedItem: T) => {
-      if (!updatedItem.id) return;
-      updateMemoryStore(prevData => {
-        if (!prevData) return null;
-        const newItems = ((prevData[collectionName] || []) as T[]).map(item => item.id === updatedItem.id ? updatedItem : item);
-        return { ...prevData, [collectionName]: newItems };
-      });
+      if (!db || !updatedItem.id) return;
+      const { id, ...itemData } = updatedItem;
+      await setDoc(doc(db, collectionName, id), itemData, { merge: true });
+      await loadData();
     };
 
     const deleteItem = async (id: string) => {
-      if (!id) return;
-      updateMemoryStore(prevData => {
-        if (!prevData) return null;
-        const newItems = ((prevData[collectionName] || []) as T[]).filter(item => item.id !== id);
-        return { ...prevData, [collectionName]: newItems };
-      });
+      if (!db || !id) return;
+      await deleteDoc(doc(db, collectionName, id));
+      await loadData();
     };
 
     return { addItem, updateItem, deleteItem };
-  }, []);
+  }, [loadData]);
 
   const value = {
     data,
